@@ -1,0 +1,7 @@
+000006 100000 LDX 2,7        ; Load index register X2 with value at location 7 (which is 3)
+000007 000012 LDR 3,0,10     ; Load R3 with contents of memory location 10
+000010 000000 LDR 2,2,10     ; Load R2 with contents of memory location (10 + X2)
+000011 000000 LDR 1,2,10,1   ; Load R1 with contents of memory location (EA computed with indirect addressing)
+000012 000000 LDA 0,0,0      ; Load register R0 with address 0
+000013 000000 LDX 1,8        ; Load X1 with contents of location 8 (which is the address of "End")
+000014 000000 JZ 0,1,0       ; Jump to "End" if R0 == 0
