@@ -10,20 +10,42 @@ public class Assembler {
     static {
         // Define the opcode mappings from ISA
         OPCODES.put("HLT", "000000");
-        OPCODES.put("TRAP", "110000");
+        OPCODES.put("TRAP", "011000");
         OPCODES.put("LDR", "000001");
         OPCODES.put("STR", "000010");
         OPCODES.put("LDA", "000011");
         OPCODES.put("LDX", "100001");
         OPCODES.put("STX", "100010");
-        OPCODES.put("JZ", "010000");
-        OPCODES.put("JNE", "010001");
-        OPCODES.put("JCC", "010010");
-        OPCODES.put("JMA", "010011");
-        OPCODES.put("JSR", "010100");
-        OPCODES.put("RFS", "010101");
-        OPCODES.put("SOB", "010110");
-        OPCODES.put("JGE", "010111");
+        OPCODES.put("JZ", "001000");
+        OPCODES.put("JNE", "001001");
+        OPCODES.put("JCC", "001010");
+        OPCODES.put("JMA", "001011");
+        OPCODES.put("JSR", "001100");
+        OPCODES.put("RFS", "001101");
+        OPCODES.put("SOB", "001110");
+        OPCODES.put("JGE", "001111");
+        OPCODES.put("AMR", "000100");
+        OPCODES.put("SMR", "000101");
+        OPCODES.put("AIR", "000110");
+        OPCODES.put("SIR", "000111");
+        OPCODES.put("MLT", "111000");
+        OPCODES.put("DVD", "111001");
+        OPCODES.put("TRR", "111010");
+        OPCODES.put("AND", "111011");
+        OPCODES.put("ORR", "111100");
+        OPCODES.put("NOT", "111101");
+        OPCODES.put("SRC", "011001");
+        OPCODES.put("RRC", "011010");
+        OPCODES.put("IN", "110001");
+        OPCODES.put("OUT", "110010");
+        OPCODES.put("CHK", "110011");
+        OPCODES.put("FADD", "011011");
+        OPCODES.put("FSUB", "011100");
+        OPCODES.put("VADD", "011101");
+        OPCODES.put("VSUB", "011110");
+        OPCODES.put("CNVRT", "011111");
+        OPCODES.put("LDFR", "101000");
+        OPCODES.put("STFR", "101001");
     }
 
     public static void main(String[] args) {
