@@ -123,7 +123,11 @@ public class Assembler {
                 listWriter.write(octalAddress + " " + octalInstruction + " " + line + "\n");
                 loadWriter.write(octalAddress + " " + octalInstruction + "\n");
                 locationCounter++;
-            }
+            //}elsif(opcode == "LOC"){ // for loc just set the location counter to given value (tho convert to binary first)
+                
+            //}elsif(opcode == "DATA"){ //for data need to use location counter and convert given value to binary
+
+            //}
         }
         reader.close();
         listWriter.close();
