@@ -112,9 +112,9 @@ public class Assembler {
             if (parts[0].equalsIgnoreCase("Data")) {
                 int value = 0;
                 if (SYMBOL_TABLE.containsKey(parts[1])) {
-                    value = SYMBOL_TABLE.get(parts[1]); // ✅ Resolves the correct label address
+                    value = SYMBOL_TABLE.get(parts[1]); 
                 } else if (parts[1].matches("\\d+")) {
-                    value = Integer.parseInt(parts[1]); // ✅ Parses numeric values correctly
+                    value = Integer.parseInt(parts[1]); 
                 } else {
                     System.err.println("Error: Undefined label '" + parts[1] + "'");
                     value = 0; // Assign default if label is undefined
