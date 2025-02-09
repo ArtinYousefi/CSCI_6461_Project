@@ -10,20 +10,42 @@ public class Assembler {
     static {
         // Define the opcode mappings from ISA
         OPCODES.put("HLT", "000000");
-        OPCODES.put("TRAP", "110000");
+        OPCODES.put("TRAP", "011000");
         OPCODES.put("LDR", "000001");
         OPCODES.put("STR", "000010");
         OPCODES.put("LDA", "000011");
         OPCODES.put("LDX", "100001");
         OPCODES.put("STX", "100010");
-        OPCODES.put("JZ", "010000");
-        OPCODES.put("JNE", "010001");
-        OPCODES.put("JCC", "010010");
-        OPCODES.put("JMA", "010011");
-        OPCODES.put("JSR", "010100");
-        OPCODES.put("RFS", "010101");
-        OPCODES.put("SOB", "010110");
-        OPCODES.put("JGE", "010111");
+        OPCODES.put("JZ", "001000");
+        OPCODES.put("JNE", "001001");
+        OPCODES.put("JCC", "001010");
+        OPCODES.put("JMA", "001011");
+        OPCODES.put("JSR", "001100");
+        OPCODES.put("RFS", "001101");
+        OPCODES.put("SOB", "001110");
+        OPCODES.put("JGE", "001111");
+        OPCODES.put("AMR", "000100");
+        OPCODES.put("SMR", "000101");
+        OPCODES.put("AIR", "000110");
+        OPCODES.put("SIR", "000111");
+        OPCODES.put("MLT", "111000");
+        OPCODES.put("DVD", "111001");
+        OPCODES.put("TRR", "111010");
+        OPCODES.put("AND", "111011");
+        OPCODES.put("ORR", "111100");
+        OPCODES.put("NOT", "111101");
+        OPCODES.put("SRC", "011001");
+        OPCODES.put("RRC", "011010");
+        OPCODES.put("IN", "110001");
+        OPCODES.put("OUT", "110010");
+        OPCODES.put("CHK", "110011");
+        OPCODES.put("FADD", "011011");
+        OPCODES.put("FSUB", "011100");
+        OPCODES.put("VADD", "011101");
+        OPCODES.put("VSUB", "011110");
+        OPCODES.put("CNVRT", "011111");
+        OPCODES.put("LDFR", "101000");
+        OPCODES.put("STFR", "101001");
     }
 
     public static void main(String[] args) {
@@ -71,38 +93,62 @@ public class Assembler {
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
         BufferedWriter listWriter = new BufferedWriter(new FileWriter(listingFile));
         BufferedWriter loadWriter = new BufferedWriter(new FileWriter(loadFile));
-        
-        locationCounter = 6;
+    
+        locationCounter = 6; // Reset to start
+    
         String line;
         while ((line = reader.readLine()) != null) {
             line = line.trim();
             if (line.isEmpty() || line.startsWith(";")) continue;
-            
-            String[] parts = line.split(" ");
-            String opcode = parts[0];
-            String binaryCode = "";
-            
-            if (OPCODES.containsKey(opcode)) {
-                binaryCode = OPCODES.get(opcode); // Retrieve binary opcode
+    
+            String[] parts = line.split("\\s+");
+    
+            if (parts[0].equalsIgnoreCase("Data")) {
+                int value = 0;
+                if (SYMBOL_TABLE.containsKey(parts[1])) {
+                    value = SYMBOL_TABLE.get(parts[1]); // Use label address
+                } else {
+                    try {
+                        value = Integer.parseInt(parts[1]); // Convert direct number
+                    } catch (NumberFormatException e) {
+                        System.err.println("Invalid Data value: " + parts[1]);
+                        continue;
+                    }
+                }
+    
+                String octalAddress = String.format("%06o", locationCounter);
+                String octalValue = String.format("%06o", value);
+    
+                listWriter.write(octalAddress + " " + octalValue + " " + line + "\n");
+                loadWriter.write(octalAddress + " " + octalValue + "\n");
+    
+                locationCounter++;
+            } else if (OPCODES.containsKey(parts[0])) {
+                String opcode = OPCODES.get(parts[0]);
                 String operands = (parts.length > 1) ? String.join(" ", Arrays.copyOfRange(parts, 1, parts.length)) : "";
-                binaryCode += parseOperands(operands); // Convert operands to binary
-                
+                String binaryCode = opcode + parseOperands(operands);
+    
                 while (binaryCode.length() < 16) {
-                    binaryCode = "0" + binaryCode; // Ensure instructions are exactly 16 bits
+                    binaryCode = "0" + binaryCode;
                 }
                 if (binaryCode.length() > 16) {
                     binaryCode = binaryCode.substring(binaryCode.length() - 16);
                 }
-                
-                String octalAddress = String.format("%06o", locationCounter); // Convert address to octal
-                String octalInstruction = binaryToOctal(binaryCode); // Convert binary instruction to octal
-                
-                // Write formatted output to listing and load files
+    
+                String octalAddress = String.format("%06o", locationCounter);
+                String octalInstruction = binaryToOctal(binaryCode);
+    
                 listWriter.write(octalAddress + " " + octalInstruction + " " + line + "\n");
                 loadWriter.write(octalAddress + " " + octalInstruction + "\n");
+    
                 locationCounter++;
+            } else if (parts[0].equalsIgnoreCase("LOC")) {
+                locationCounter = Integer.parseInt(parts[1]);
+            } else if (parts[0].endsWith(":")) {
+                continue; // Ignore labels in second pass
             }
         }
+    
         reader.close();
         listWriter.close();
         loadWriter.close();
