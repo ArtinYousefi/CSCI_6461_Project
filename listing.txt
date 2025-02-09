@@ -1,7 +1,17 @@
-000006 100000 LDX 2,7        ; Load index register X2 with value at location 7 (which is 3)
-000007 000012 LDR 3,0,10     ; Load R3 with contents of memory location 10
-000010 000000 LDR 2,2,10     ; Load R2 with contents of memory location (10 + X2)
-000011 000000 LDR 1,2,10,1   ; Load R1 with contents of memory location (EA computed with indirect addressing)
-000012 000000 LDA 0,0,0      ; Load register R0 with address 0
-000013 000000 LDX 1,8        ; Load X1 with contents of location 8 (which is the address of "End")
-000014 000000 JZ 0,1,0       ; Jump to "End" if R0 == 0
+000004 000026 Data 22         ; Store 10 at location 5
+000005 000003 Data 3          ; Store 3 at location 6
+000006 000111 Data 73         ; Store 12 at location 7
+000007 000011 Data 9         ; Store 12 at location 8
+000010 000030 Data End        ; Store address of "End" at location 9
+000011 000011 Data 9
+000012 000000 Data 0
+000013 005600 LDX 1,6        ; Load index register X1 with value at location 6 (which is 3)
+000014 003007 LDR 2,0,7     ; Load R2 with contents of memory location 7
+000015 003610 LDR 3,2,8     ; Load R3 with contents of memory location 8
+000016 002710 LDR 1,3,8     ; Load R3 with contents of memory location 8
+000017 007500 LDX 3,5        ; Load X3 with contents of location 5
+000020 002647 LDR 1,2,7,1   ; Load R1 with contents of memory location (EA computed with indirect addressing)
+000021 006000 LDA 0,0,0      ; Load register R0 with address 0
+000022 015100 LDX 2,9        ; Load X2 with contents of location 9 (which is the address of "End")
+000023 020100 JZ 0,1,0       ; Jump to "End" if R0 == 0
+002000 000000 End: HLT       ; Stop execution
