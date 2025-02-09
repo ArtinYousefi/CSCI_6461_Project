@@ -20,7 +20,7 @@ public class Assembler {
         OPCODES.put("STX", "100010");
     
         // Transfer Instructions
-        OPCODES.put("JZ", "010000");
+        OPCODES.put("JZ", "001000");
         OPCODES.put("JNE", "010001");
         OPCODES.put("JCC", "010010");
         OPCODES.put("JMA", "010011");
