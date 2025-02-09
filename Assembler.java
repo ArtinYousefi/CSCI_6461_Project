@@ -150,7 +150,12 @@ public class Assembler {
             } else if (parts[0].equalsIgnoreCase("LOC")) {
                 locationCounter = Integer.parseInt(parts[1]);
             } else if (parts[0].endsWith(":")) {
-                continue; // Ignore labels in second pass
+                String opcode = OPCODES.get(parts[1]);
+                String octalAddress = String.format("%06o", locationCounter);
+                String octalInstruction = binaryToOctal(opcode);
+                listWriter.write(octalAddress + " " + octalInstruction + " " + line + "\n");
+                loadWriter.write(octalAddress + " " + octalInstruction + "\n");
+
             }
         }
     
