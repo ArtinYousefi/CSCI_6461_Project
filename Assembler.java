@@ -8,45 +8,51 @@ public class Assembler {
     private static int locationCounter = 6; // Initial location counter based on ISA
     
     static {
-        // Define the opcode mappings from ISA
+        // Miscellaneous Instructions
         OPCODES.put("HLT", "000000");
         OPCODES.put("TRAP", "011000");
+    
+        // Load/Store Instructions
         OPCODES.put("LDR", "000001");
         OPCODES.put("STR", "000010");
         OPCODES.put("LDA", "000011");
         OPCODES.put("LDX", "100001");
         OPCODES.put("STX", "100010");
-        OPCODES.put("JZ", "001000");
-        OPCODES.put("JNE", "001001");
-        OPCODES.put("JCC", "001010");
-        OPCODES.put("JMA", "001011");
-        OPCODES.put("JSR", "001100");
-        OPCODES.put("RFS", "001101");
-        OPCODES.put("SOB", "001110");
-        OPCODES.put("JGE", "001111");
+    
+        // Transfer Instructions
+        OPCODES.put("JZ", "010000");
+        OPCODES.put("JNE", "010001");
+        OPCODES.put("JCC", "010010");
+        OPCODES.put("JMA", "010011");
+        OPCODES.put("JSR", "010100");
+        OPCODES.put("RFS", "010101");
+        OPCODES.put("SOB", "010110");
+        OPCODES.put("JGE", "010111");
+    
+        // Arithmetic and Logical Instructions
         OPCODES.put("AMR", "000100");
         OPCODES.put("SMR", "000101");
         OPCODES.put("AIR", "000110");
         OPCODES.put("SIR", "000111");
+    
+        // Register-to-Register Operations
         OPCODES.put("MLT", "111000");
         OPCODES.put("DVD", "111001");
         OPCODES.put("TRR", "111010");
         OPCODES.put("AND", "111011");
         OPCODES.put("ORR", "111100");
         OPCODES.put("NOT", "111101");
+    
+        // Shift and Rotate Instructions
         OPCODES.put("SRC", "011001");
         OPCODES.put("RRC", "011010");
+    
+        // I/O Instructions
         OPCODES.put("IN", "110001");
         OPCODES.put("OUT", "110010");
         OPCODES.put("CHK", "110011");
-        OPCODES.put("FADD", "011011");
-        OPCODES.put("FSUB", "011100");
-        OPCODES.put("VADD", "011101");
-        OPCODES.put("VSUB", "011110");
-        OPCODES.put("CNVRT", "011111");
-        OPCODES.put("LDFR", "101000");
-        OPCODES.put("STFR", "101001");
     }
+    
 
     public static void main(String[] args) {
         if (args.length < 1) {
@@ -106,15 +112,14 @@ public class Assembler {
             if (parts[0].equalsIgnoreCase("Data")) {
                 int value = 0;
                 if (SYMBOL_TABLE.containsKey(parts[1])) {
-                    value = SYMBOL_TABLE.get(parts[1]); // Use label address
+                    value = SYMBOL_TABLE.get(parts[1]); // ✅ Resolves the correct label address
+                } else if (parts[1].matches("\\d+")) {
+                    value = Integer.parseInt(parts[1]); // ✅ Parses numeric values correctly
                 } else {
-                    try {
-                        value = Integer.parseInt(parts[1]); // Convert direct number
-                    } catch (NumberFormatException e) {
-                        System.err.println("Invalid Data value: " + parts[1]);
-                        continue;
-                    }
+                    System.err.println("Error: Undefined label '" + parts[1] + "'");
+                    value = 0; // Assign default if label is undefined
                 }
+                
     
                 String octalAddress = String.format("%06o", locationCounter);
                 String octalValue = String.format("%06o", value);
@@ -156,24 +161,43 @@ public class Assembler {
     
     // Converts operands to their binary representation
     private static String parseOperands(String operands) {
-        String[] parts = operands.split("[ ,]");
+        if (operands.isEmpty()) return "0000000000"; // Default empty operands
+    
+        String[] parts = operands.split("[, ]+");
         StringBuilder binaryOperands = new StringBuilder();
-        for (String part : parts) {
-            if (SYMBOL_TABLE.containsKey(part)) { // Replace label with its address
-                binaryOperands.append(String.format("%05d", Integer.parseInt(Integer.toBinaryString(SYMBOL_TABLE.get(part)))));
-            } else {
-                try {
-                    binaryOperands.append(String.format("%05d", Integer.parseInt(Integer.toBinaryString(Integer.parseInt(part)))));
-                } catch (NumberFormatException e) {
-                    binaryOperands.append("00000"); // Default to zero if operand is invalid
-                }
-            }
+    
+        int reg = 0, index = 0, indirect = 0, address = 0;
+    
+        if (parts.length > 0) {
+            try {
+                reg = Integer.parseInt(parts[0]); // First operand is register
+            } catch (NumberFormatException ignored) {}
         }
-        while (binaryOperands.length() < 10) {
-            binaryOperands.append("0"); // Ensure operands fit in required bit size
+        if (parts.length > 1) {
+            try {
+                index = Integer.parseInt(parts[1]); // Second operand is index register
+            } catch (NumberFormatException ignored) {}
         }
+        if (parts.length > 2) {
+            try {
+                address = SYMBOL_TABLE.getOrDefault(parts[2], Integer.parseInt(parts[2])); // Third operand is address
+            } catch (NumberFormatException ignored) {}
+        }
+        if (parts.length > 3) {
+            try {
+                indirect = Integer.parseInt(parts[3]); // Fourth operand (optional) is indirect flag
+            } catch (NumberFormatException ignored) {}
+        }
+    
+        // Convert values to binary with correct field widths
+        binaryOperands.append(String.format("%02d", Integer.parseInt(Integer.toBinaryString(reg))));   // 2-bit register
+        binaryOperands.append(String.format("%02d", Integer.parseInt(Integer.toBinaryString(index)))); // 2-bit index
+        binaryOperands.append(indirect == 1 ? "1" : "0"); // 1-bit indirect
+        binaryOperands.append(String.format("%05d", Integer.parseInt(Integer.toBinaryString(address)))); // 5-bit address
+    
         return binaryOperands.toString();
     }
+    
     
     // Converts a binary string to an octal representation
     private static String binaryToOctal(String binary) {
