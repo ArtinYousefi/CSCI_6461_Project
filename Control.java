@@ -3,8 +3,16 @@ import java.util.*;
 
 //note all shorts have been swapped to ints and will implement a check so that they don't go over the 16 bit size of 65,535
 public class Control {
+	
+	public static Memory mem;
+	public static String file;
+	
+	//constructor
+	public Control() {
+		 mem = new Memory();
+	}
 
-	public static Memory mem = new Memory();
+//	public static Memory mem = new Memory();
 	
     private static String binaryToOctal(String binary) {
         long decimal = Long.parseLong(binary, 2); // Convert binary to decimal
@@ -23,17 +31,6 @@ public class Control {
     }
 
 
-	//use this as testing for now, THO need to create test files
-	//rn need to add registers to memory: IR,PC,MBR,MFR,MAR
-	//in here need to have a function that reads the input file line by line
-	//each line will be converted to binary then read the correct bits to see what the function is
-	//call function and pass info
-	//then in function read the rest of the bits to do as needed.
-	//for now, gonna do a case statement for the 5 functions
-    
-    //so load file needs to run and load the instructions into memory at the given addresses (First col)
-    //then second loop goes through and actually executes the instructions and uses the IR,PC,MBR ETC
-    
     
     //function to compute effective address - values are decimal
     public static int computeEA (byte ix, byte addr, byte indirect) {
@@ -124,7 +121,7 @@ public class Control {
 			
 			String binary = String.format("%16s",Long.toBinaryString(mem.IR)).replace(" ", "0");
 			//convert instructions in IR to binary and set all the variables (need both for comparisons and functions)
-			System.out.println(binary);
+			//System.out.println(binary);
 			
 			//SO rn breaks b/c data has a 000000 operand need to swap the HLT check to be here (and check if the entire instruction is 0)
 			//then below if the operand is 000000 store data at that address
@@ -178,19 +175,20 @@ public class Control {
     
     public static void main(String[] args) {
         // Create a new memory instance
-        Memory mem = new Memory();
         
-        //the mem and loadLF can be called by the GUI when the file is "selected"/init is selected
-        String file = "src\\load4.txt"; //will swap to args[0] once it works, for others 
-        try {
-			loadLF(file); 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        runSimulator();  //should run when run is selected in GUI
-
-        
+//    	Control cont = new Control();
+//        //the mem and loadLF can be called by the GUI when the file is "selected"/init is selected
+//        String file = "src\\load4.txt"; //will swap to args[0] once it works, for others 
+//        
+//        try { //will swap to gui calling this on init (also need to add function to grab file from file input)
+//			loadLF(file); 
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//        
+//        runSimulator();  //should run when run is selected in GUI
+//
+//        
     }
 	
 	
