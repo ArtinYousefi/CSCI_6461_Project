@@ -1,5 +1,3 @@
-package tryingtowork;
-
 /**
  * This class simulates a single-port memory for the CS6461 computer system.
  *
@@ -23,39 +21,29 @@ public class Memory {
      * Internal array to store the memory contents.
      * Each element is a 16-bit (short) value.
      */
-    public short[] memory; //was private, need public for access w/ functions, could also use a var to avoid this but public is fine for this purpose
+    public int[] memory; //was private, need public for access w/ functions, could also use a var to avoid this but public is fine for this purpose
     
-    //NOTE ANYTHING THAT NEEDS TO BE STORED NEEDS TO BE IN DECIMAL since we're using shorts
-    //you can techinally store into shorts using binary literals BUT getting them out is a little harder since it uses 2s complement
-    //so at LEAST retrieving u have to convert to binary
-/**  FOR GETTING BINARY FROM STORED SHORT --so basically octal to binary store binary in short then to retreive convert like below and then do what's needed
-    short aShort = (short)0b1010000101000101;  !!! NOTE THE b FOR BINARY if not there it won't store right!!!
-    System.out.println(aShort);
-    System.out.println(Integer.toBinaryString(aShort).substring(16,32));
-**/
+//NOTE: was shorts, but due to them being for signed/two's complement does not work for our application, instead we will use ints and limit
+    //artificially
+    
     //Additional Registers -- all public for ease of access for GUI
     
+   //need to check sizes to make sure they don't overflow their intended amt
+    
     //Index Registers 3x 1-3- 16 bits each  (could make them an array 0-0 instead of individual vars?)
-//    public short IX1;
-//    public short IX2;
-//    public short IX3;
-    public short[] IX;
+    public int[] IX;
     //General Purpose Registers 4x 0-3 - 16 bits each
-//    public short GPR0;
-//    public short GPR1; 
-//    public short GPR2;
-//    public short GPR3;
-    public short[] GPR;
+    public int[] GPR;
     //Program Counter -12 bits
-    public short PC; //will have to check that it doesn't overflow/go past 12 bits
+    public int PC; //will have to check that it doesn't overflow/go past 12 bits
     //Condition Code - 4 bits  
     public byte CC; 
     //Instruction Register - 16 bits
-    public short IR;
+    public int IR;
     //Memory Address Register - 12 bits
-    public short MAR;
+    public int MAR;
     //Memory Buffer Register - 16 bits
-    public short MBR;
+    public int MBR;
     //Machine Fault Register - 4 bits		
     public byte MFR;
     //May need additional registers in the future for calculations like Y and Z in diagram
@@ -65,7 +53,7 @@ public class Memory {
      * and sets all locations to zero.
      */
     public Memory() {
-        memory = new short[MEM_SIZE];
+        memory = new int[MEM_SIZE];
         // Java initializes a new short array to zero by default,
         // but we explicitly set it here for clarity.
         for (int i = 0; i < MEM_SIZE; i++) {
@@ -73,12 +61,12 @@ public class Memory {
         }
         //Init registers here
         
-        IX = new short[IX_SIZE];
+        IX = new int[IX_SIZE];
         
         for (int i = 0; i < IX_SIZE; i++) {
         	IX[i] = 0;
         }
-        GPR = new short[GPR_SIZE];
+        GPR = new int[GPR_SIZE];
         
         for (int i = 0; i < GPR_SIZE; i++) {
             GPR[i] = 0;
@@ -98,7 +86,7 @@ public class Memory {
      * @return The 16-bit value stored at that address.
      * @throws IllegalArgumentException if the address is out of bounds.
      */
-    public short readWord(int address) {
+    public int readWord(int address) {
         // Check for valid address range
         if (address < 0 || address >= MEM_SIZE) {
             throw new IllegalArgumentException("Memory read out of bounds: " + address);
@@ -114,7 +102,7 @@ public class Memory {
      * @param data    The 16-bit data value to store.
      * @throws IllegalArgumentException if the address is out of bounds.
      */
-    public void writeWord(int address, short data) {
+    public void writeWord(int address, int data) {
         // Check for valid address range
         if (address < 0 || address >= MEM_SIZE) {
             throw new IllegalArgumentException("Memory write out of bounds: " + address);
