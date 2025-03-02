@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -62,6 +63,7 @@ public class GUI implements ActionListener{
 	private JButton btnNewButton_3_2; 
 	private JLabel lblNewLabel_3_1;
 	private JButton btnNewButton_3_2_1; 
+	public static Control control;
 	
 	
 	/**
@@ -85,6 +87,7 @@ public class GUI implements ActionListener{
 	 */
 	public GUI() {
 		initialize();
+		control = new Control();
 	}
 
 	/**
@@ -328,6 +331,18 @@ public class GUI implements ActionListener{
 		btnNewButton_3_2.setBackground(Color.BLUE);
 		btnNewButton_3_2.setBounds(55, 338, 19, 21);
 		frmFrontPanel.getContentPane().add(btnNewButton_3_2);
+		btnNewButton_3_2.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+					control.loadLF("src//load4.txt");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		    }
+		});
 		
 		lblNewLabel_3_1 = new JLabel("Run");
 		lblNewLabel_3_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -339,11 +354,20 @@ public class GUI implements ActionListener{
 		btnNewButton_3_2_1.setBackground(Color.BLUE);
 		btnNewButton_3_2_1.setBounds(114, 338, 19, 21);
 		frmFrontPanel.getContentPane().add(btnNewButton_3_2_1);
+		btnNewButton_3_2_1.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        control.runSimulator();
+		    }
+		});
+		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+
 		
 	}
 }
