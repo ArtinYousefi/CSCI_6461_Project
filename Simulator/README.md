@@ -5,15 +5,15 @@ This repository contains two parts of the CS6461 project simulator: the memory a
 
 ## Overview
 
--**Memory.java**
+**Memory.java**
   - **Memory Capacity:** 2048 words (each 16-bit wide)
   - **Supported Operations:**
     - `readWord(int address)`: Reads a 16-bit word from the specified address.
     - `writeWord(int address, short data)`: Writes a 16-bit word to the specified address.
     - `reset()`: Resets the memory by setting all locations to zero.
   - **Purpose:** Provides a simple and robust simulation of a single-port memory (and registers) for executing basic load and store instructions.
-  - 
--**Control.java**
+    
+**Control.java**
   - **Supported Operations:**
     - `computeEA (byte ix, byte addr, byte indirect)`: Computes effective address based on provided inputs.
     - `loadLF (String file) `: Runs when user selects 'Init', loads loadfile into memory.
