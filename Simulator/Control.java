@@ -68,9 +68,9 @@ public class Control {
                     System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
                     
                     if (jumpAddr != 0) {  
-                        mem.PC = jumpAddr;  // ✅ Set PC to the correct address
+                        mem.PC = jumpAddr; 
                         gui.updateGUI();
-                        return;  // ✅ Skip PC auto-increment
+                        return;  
                     }
                 }
                 System.out.println("[DEBUG] JZ Not Taken");
@@ -85,7 +85,7 @@ public class Control {
     
         mem.PC++;
         printRegisters();
-        gui.updateGUI();  // ✅ Update GUI after each step
+        gui.updateGUI();  
     }
 
   
