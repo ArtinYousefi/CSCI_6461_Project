@@ -1,196 +1,308 @@
-package tryingtowork;
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-//note all shorts have been swapped to ints and will implement a check so that they don't go over the 16 bit size of 65,535
+import javax.swing.JOptionPane;
+
 public class Control {
-	
-	public static Memory mem;
-	public static String file;
-	
-	//constructor
-	public Control() {
-		 mem = new Memory();
-	}
+    public static Memory mem;
+    private GUI gui;
 
-//	public static Memory mem = new Memory();
-	
-    private static String binaryToOctal(String binary) {
-        long decimal = Long.parseLong(binary, 2); // Convert binary to decimal
-        return String.format("%06o", decimal); // Convert decimal to octal format
-    }
-    
-    private static String octalToBinary(String octal) {
-        long decimal = Long.parseLong(octal, 8); // Convert binary to decimal
-        
-        //Converting decimal to binary -> padding to 16 bits with spaces and replacing them with 0s
-        String binary = String.format("%16s",Long.toBinaryString(decimal)).replace(" ", "0");
 
-        //binary = "0b" + binary; //needed to store correctly
-        
-        return binary;
+
+    public static  CPU cpu;
+
+    public Control(GUI gui) {
+        this.gui = gui;
+        this.mem = new Memory();
+        this.cpu = new CPU(mem);
     }
 
-
+    public void stepSimulator() {
+        if (mem.readWord(mem.PC) == 0) {  
+            System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
+            JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
     
-    //function to compute effective address - values are decimal
-    public static int computeEA (byte ix, byte addr, byte indirect) {
-    	int res = 0;    	
-    	
-    	if(ix == 0) {
-    		res = addr;
-    	}else if (ix == 1 || ix == 2 || ix == 3) {
-    		res = (ix + addr); //was mem.readWord(addr) but that was incorrect - misread doc
-    	}
-    	
-    	if(indirect ==  1) {
-    		int tmp = mem.readWord(res);
-    		res = tmp;
-    	}
-    	return res;
+        mem.MAR = mem.PC;
+        mem.MBR = mem.readWord(mem.MAR);
+        mem.IR = mem.MBR;
+    
+        System.out.println("[DEBUG] Step Executing at PC: " + mem.PC + " -> " + Integer.toOctalString(mem.IR));
+    
+        // Decode instruction
+        String binary = String.format("%16s", Integer.toBinaryString(mem.IR)).replace(" ", "0");
+        String op = binary.substring(0, 6);
+        int reg = Integer.parseInt(binary.substring(6, 8), 2);
+        int ix = Integer.parseInt(binary.substring(8, 10), 2);
+        int indirect = Integer.parseInt(binary.substring(10, 11), 2);
+        int addr = Integer.parseInt(binary.substring(11, 16), 2);
+    
+        System.out.println("[DEBUG] Decoded: OPCODE=" + op + " REG=" + reg + " IX=" + ix + " INDIRECT=" + indirect + " ADDR=" + addr);
+    
+        int ea = computeEA((byte) ix, (byte) addr, (byte) indirect, Integer.parseInt(op, 2));
+        mem.MAR = ea;
+    
+        // **Execute instruction (step by step)**
+        switch (op) {
+            case "000001": // LDR
+                ldr((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                break;
+            case "000010": // STR
+                str((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                break;
+            case "000011": // LDA
+                lda((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                break;
+            case "100001": // LDX
+                ldx((byte) ix, (byte) addr, (byte) indirect);
+                break;
+            case "100010": // STX
+                stx((byte) ix, (byte) addr, (byte) indirect);
+                break;
+            case "001000": // JZ (Jump if Zero)
+                if (mem.GPR[reg] == 0) {
+                    int jumpAddr = mem.readWord(ea);
+                    System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
+                    
+                    if (jumpAddr != 0) {  
+                        mem.PC = jumpAddr;  
+                        gui.updateGUI();
+                        return;  
+                    }
+                }
+                System.out.println("[DEBUG] JZ Not Taken");
+                break;
+            case "000000": // HLT (Halt)
+                System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
+                JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            default:
+                System.out.println("[ERROR] Unknown Opcode: " + op);
+        }
+    
+        mem.PC++;
+        printRegisters();
+        gui.updateGUI();  
+    }
+
+  
+    
+
+    public void haltSimulator() {
+        cpu.setHalted(true);
+        JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static Memory getMemory() {
+        return mem;
+    }
+
+    // **Compute Effective Address**
+    public static int computeEA(byte ix, byte addr, byte indirect, int opcode) {
+        int effectiveAddress = addr;
+    
+        // **Fix: JZ should fetch jump target from memory directly**
+        if (opcode == 8) {  // JZ instruction
+            effectiveAddress = mem.readWord(addr);  // Read the jump address from memory
+            System.out.println("[DEBUG] JZ Address Fetched from Mem[" + addr + "] = " + effectiveAddress);
+            return effectiveAddress;
+        }
+    
+        // **Apply IXR only if it's not JZ**
+        if (ix > 0 && opcode != 8) {  
+            effectiveAddress += mem.IX[ix - 1];
+        }
+    
+        // **Indirect Addressing Handling**
+        if (indirect == 1) {
+            int prevEA = effectiveAddress;
+            effectiveAddress = mem.readWord(effectiveAddress);
+            System.out.println("[DEBUG] Indirect Addressing: EA changed from " + prevEA + " to " + effectiveAddress);
+        }
+    
+        System.out.println("[DEBUG] Final EA: " + effectiveAddress);
+        return effectiveAddress;
     }
     
-    //loads loadfile into memory (runs when init is clicked)
-    //converts octal to binary to store in the short
-    public static void loadLF (String file) throws IOException {	//swap to boolean and return false on failure
-    		
-    	//swap res to be both the address line and the instructions
-        //short tmp = Short.parseShort(String.valueOf(res), 2);//so could us this to translate the binary to store as a short
+    
+    
+    
+    
 
+    // **Load file and initialize memory**
+    public static void loadLF(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line;
-        int counter = 0;
+        boolean foundFirstInstruction = false;
+    
         while ((line = reader.readLine()) != null) {
             line = line.trim();
-            if (line.isEmpty() || line.startsWith(";")) continue; // Skip empty and comment lines
-            
+            if (line.isEmpty() || line.startsWith(";")) continue;
+    
             String[] parts = line.split(" ");
-            
-            String addrStr = octalToBinary(parts[0]);
-            String instStr = octalToBinary(parts[1]);
-           
-            int addr = Integer.parseInt(String.valueOf(addrStr), 2); //storing as a decimal
-            int inst = Integer.parseInt(String.valueOf(instStr), 2);
-
-            
-            if (counter == 0) { //at first line, init the pc
-            	mem.PC = addr;
+            if (parts.length < 2) continue;
+    
+            int addr = Integer.parseInt(parts[0], 8);  // Convert octal to decimal
+            int value = Integer.parseInt(parts[1], 8); // Convert octal to decimal
+    
+            mem.writeWord(addr, value);
+            System.out.println("Memory Updated -> Address: " + addr + " Value: " + value);
+    
+            // **Ensure we start execution at the first real instruction**
+            if (!foundFirstInstruction && isInstruction(value, addr)) {
+                mem.PC = addr;
+                foundFirstInstruction = true;
+                System.out.println("[DEBUG] PC initialized to first instruction: " + mem.PC);
             }
-            
-            mem.writeWord(addr,inst);  //store instructions at address in memory
-            counter++;
-//            System.out.println(String.format("%16s",Long.toBinaryString(mem.readWord(addr))).replace(" ", "0"));
         }
         reader.close();
     }
     
-    //Load register from memory
-	public static void ldr(byte r, byte ix, byte addr, byte indirect) {
-		//short ea = computeEA(ix,addr,indirect);
-		//System.out.println(mem.GPR[r]);	
-		mem.GPR[r] = mem.readWord(mem.MAR); //might have to use MBR and stuff for this!
-		//System.out.println(mem.GPR[r]);	
-	}
-	
-	//store register to memory
-	public static void str(byte r, byte ix, byte addr, byte indirect) {
-		mem.writeWord(mem.MAR, mem.GPR[r]);
-	}
-	//load register with address
-	public static void lda(byte r, byte ix, byte addr, byte indirect) {	
-		mem.GPR[r] = mem.MAR;
-	}
-	//load index register from memory
-	public static void ldx(byte ix, byte addr, byte indirect) {		//when loading and storing need -1 due to arrays starting at 0
-		mem.IX[ix-1] = mem.readWord(mem.MAR);
-	}
-	//store index register to memory
-	public static void stx(byte ix, byte addr, byte indirect) {
+    
+    
+    
+
+    private static boolean isInstruction(int value, int address) {
+        int opcode = (value >> 10) & 0b111111; // Extract first 6 bits (opcode)
+    
+        // Known valid opcodes
+        Set<Integer> validOpcodes = new HashSet<>(Arrays.asList(
+            1, 2, 3, 33, 34, 8, 17, 18, 19, 20, 21, 22, 23, 24, 
+            25, 26, 27, 28, 29, 30, 31, 32, 9, 10, 11, 12, 13, 14, 15, 16
+        ));
+    
+        // Ensure opcode is valid, non-zero, and in the expected instruction range
+        return validOpcodes.contains(opcode) && opcode != 0 && address >= 13;
+    }
+    
+
+    
+
+    // **Instruction Implementations**
+    public static void ldr(byte r, byte ix, byte addr, byte indirect) {
+        int ea = computeEA(ix, addr, indirect, 1);
+        mem.GPR[r] = mem.readWord(ea);
+        mem.MAR = ea;
+        mem.MBR = mem.GPR[r];
+        System.out.println("[DEBUG] LDR -> GPR[" + r + "] = " + mem.GPR[r]);
+    }
+
+    public static void ldx(byte ix, byte addr, byte indirect) {
+        int ea = computeEA(ix, addr, indirect, 33);
+        if (ix > 0 && ix <= 3) {  // Ensure IX is valid
+            mem.IX[ix - 1] = mem.readWord(ea);
+            mem.MAR = ea;
+            mem.MBR = mem.IX[ix - 1];
+            System.out.println("[DEBUG] LDX -> IXR[" + (ix - 1) + "] = " + mem.IX[ix - 1]);
+        } else {
+            System.out.println("[ERROR] Invalid IXR index: " + ix);
+        }
+    }
+
+    public static void stx(byte ix, byte addr, byte indirect) {
 		mem.writeWord(mem.MAR, mem.IX[ix-1]);
 	}
-    
-	//runs the simulator, populates the registers and executes the instructions
-	public static void runSimulator() {
-		//need to turn this into a while loop while mem.readword(MAR) != 0
-		//also for now, pc will just be incremented, in future version will have to be an if or case since jumps can occur
-		
-		//read PC to get address of first instructions
-		while (mem.readWord(mem.PC) != 0) { //for now, exit once you reach mem with no instructions
-			mem.MAR = mem.PC;
-			mem.MBR = mem.readWord(mem.MAR);
-			mem.IR = mem.MBR;
-			
-			String binary = String.format("%16s",Long.toBinaryString(mem.IR)).replace(" ", "0");
-			//convert instructions in IR to binary and set all the variables (need both for comparisons and functions)
-			//System.out.println(binary);
-			
-			//SO rn breaks b/c data has a 000000 operand need to swap the HLT check to be here (and check if the entire instruction is 0)
-			//then below if the operand is 000000 store data at that address
-			if (binary.equals("0000000000000000")) { //HLT need to figure out better way later
-	        	System.out.println("HLT found"); //not quite accurate but needed for now
-				mem.PC = 0;
-	        	return; //need to properly finish but for now just force an end
-			}
-			//operand
-	        String op = binary.substring(0,6);
-	        Byte op_val = Byte.parseByte(String.valueOf(op), 2);
-	        //register (GPR)
-	        String r = binary.substring(6,8);
-	        Byte r_val = Byte.parseByte(String.valueOf(r), 2);
-	        //index (IX)
-	        String ix = binary.substring(8,10);
-	        Byte ix_val = Byte.parseByte(String.valueOf(ix), 2);
-	        //indirect
-	        String i = binary.substring(10,11);
-	        Byte i_val = Byte.parseByte(String.valueOf(i), 2);
-	        //address
-	        String addr = binary.substring(11,16);
-	        Byte addr_val = Byte.parseByte(String.valueOf(addr), 2);
-	        
-			//get instruction, convert to binary, set all vars, do case to determine which function to call
-	        int ea = computeEA(ix_val,addr_val,i_val);
-	        mem.MAR = ea; //updating MAR to be effective address
-	        
-	        //swaped from case to use equals instead
-	        if(op.equals("000001")) {
-	        	ldr(r_val, ix_val, addr_val, i_val);
-	        }else if (op.equals("000010")) {
-	        	str(r_val, ix_val, addr_val, i_val);
-	        }else if (op.equals("000011")) {
-	        	lda(r_val, ix_val, addr_val, i_val);
-	        }else if (op.equals("100001")) {
-	        	ldx(ix_val, addr_val, i_val);
-	        }else if (op.equals("100010")) {
-	        	stx(ix_val, addr_val, i_val);
-	        }else if (op.equals("000000")) { //DONT NEED THIS THIS HAS ALREADY BEEN DONE mem.writeWord(mem.PC, addr_val);
-	        	System.out.println("data already loaded");
-	        }else {
-	        	System.out.println("operand not recognized");
-	        }
 
-	        mem.PC++;
-
-		}
-		System.out.println("file finished"); 
+    public static void str(byte r, byte ix, byte addr, byte indirect) {
+		mem.writeWord(mem.MAR, mem.GPR[r]);
 	}
     
-    public static void main(String[] args) {
-        // Create a new memory instance
-        
-//    	Control cont = new Control();
-//        //the mem and loadLF can be called by the GUI when the file is "selected"/init is selected
-//        String file = "src\\load4.txt"; //will swap to args[0] once it works, for others 
-//        
-//        try { //will swap to gui calling this on init (also need to add function to grab file from file input)
-//			loadLF(file); 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//        
-//        runSimulator();  //should run when run is selected in GUI
-//
-//        
+
+
+    public static void lda(byte r, byte ix, byte addr, byte indirect) {
+        int ea = computeEA(ix, addr, indirect, 3);
+        int value = mem.readWord(ea); 
+        mem.GPR[r] = value;
+        mem.MAR = ea;
+        mem.MBR = value;  
+        System.out.println("[DEBUG] LDA -> GPR[" + r + "] = " + mem.GPR[r]);
     }
-	
-	
+    
+    
+    
+
+    // **Main Execution Loop**
+    public static void runSimulator() {
+        while (mem.readWord(mem.PC) != 0) {
+            mem.MAR = mem.PC;
+            mem.MBR = mem.readWord(mem.MAR);
+            mem.IR = mem.MBR;
+    
+            System.out.println("[DEBUG] Executing Instruction at PC: " + mem.PC + " -> " + Integer.toOctalString(mem.IR));
+    
+            String binary = String.format("%16s", Integer.toBinaryString(mem.IR)).replace(" ", "0");
+            System.out.println("[DEBUG] Binary Instruction: " + binary);
+    
+            String op = binary.substring(0, 6);
+            int reg = Integer.parseInt(binary.substring(6, 8), 2);
+            int ix = Integer.parseInt(binary.substring(8, 10), 2);
+            int indirect = Integer.parseInt(binary.substring(10, 11), 2);
+            int addr = Integer.parseInt(binary.substring(11, 16), 2);
+    
+            System.out.println("[DEBUG] Decoded: OPCODE=" + op + " REG=" + reg + " IX=" + ix + " INDIRECT=" + indirect + " ADDR=" + addr);
+    
+            int ea = computeEA((byte) ix, (byte) addr, (byte) indirect, Integer.parseInt(op, 2));
+            mem.MAR = ea;
+    
+            // **Instruction Execution using if-else**
+            if (op.equals("000001")) {  // LDR
+                ldr((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+            } else if (op.equals("000010")) {  // STR
+                str((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+            } else if (op.equals("000011")) {  // LDA
+                lda((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+            } else if (op.equals("100001")) {  // LDX
+                ldx((byte) ix, (byte) addr, (byte) indirect);
+            } else if (op.equals("100010")) {  // STX
+                stx((byte) ix, (byte) addr, (byte) indirect);
+            } else if (op.equals("001000")) {  // JZ (Jump if Zero)
+                if (mem.GPR[reg] == 0) {
+                    int jumpAddr = mem.readWord(ea);
+                    System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
+                    
+                    if (jumpAddr != 0) {  
+                        mem.PC = jumpAddr; 
+                        continue; 
+                    }
+                }
+                System.out.println("[DEBUG] JZ Not Taken");
+            } else if (op.equals("000000")) {  // HLT (Halt)
+                System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
+                return;
+            } else {
+                System.out.println("[ERROR] Unknown Opcode: " + op);
+            }
+    
+            mem.PC++;
+            printRegisters();
+        }
+    
+        System.out.println("[DEBUG] BEFORE EXECUTION: GPRs: " +
+            mem.GPR[0] + ", " + mem.GPR[1] + ", " + mem.GPR[2] + ", " + mem.GPR[3]);
+    
+        System.out.println("[DEBUG] Simulation Finished.");
+    }
+    
+    public void storeData() {
+        try {
+            int address = Integer.parseInt(gui.textField_9.getText()); // Get MAR value
+            int data = Integer.parseInt(gui.textField_10.getText()); // Get MBR value
+    
+            mem.writeWord(address, data); // Store data in memory
+            gui.updateMemoryDisplay(); // Refresh the memory table
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Invalid Input!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    // **Print Registers**
+    public static void printRegisters() {
+        System.out.println("[DEBUG] Registers:");
+        System.out.println("PC: " + mem.PC + " | MAR: " + mem.MAR + " | MBR: " + mem.MBR + " | IR: " + mem.IR);
+        System.out.println("GPRs: " + mem.GPR[0] + ", " + mem.GPR[1] + ", " + mem.GPR[2] + ", " + mem.GPR[3]);
+        System.out.println("IXRs: " + mem.IX[0] + ", " + mem.IX[1] + ", " + mem.IX[2]);
+    }
 }
