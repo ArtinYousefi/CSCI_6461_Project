@@ -214,10 +214,10 @@ public class Control {
 
     public static void lda(byte r, byte ix, byte addr, byte indirect) {
         int ea = computeEA(ix, addr, indirect, 3);
-        int value = mem.readWord(ea);  // ✅ Read memory at EA
-        mem.GPR[r] = value;  // ✅ Store the fetched value, not EA
+        int value = mem.readWord(ea);  
+        mem.GPR[r] = value;  
         mem.MAR = ea;
-        mem.MBR = value;  // ✅ Store loaded value into MBR
+        mem.MBR = value;  
         System.out.println("[DEBUG] LDA -> GPR[" + r + "] = " + mem.GPR[r]);
     }
     
@@ -264,8 +264,8 @@ public class Control {
                     System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
                     
                     if (jumpAddr != 0) {  
-                        mem.PC = jumpAddr;  // ✅ Set PC to the correct address
-                        continue;  // ✅ Skip PC auto-increment
+                        mem.PC = jumpAddr;  
+                        continue;  
                     }
                 }
                 System.out.println("[DEBUG] JZ Not Taken");
