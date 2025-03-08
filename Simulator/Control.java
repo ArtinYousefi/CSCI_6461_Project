@@ -214,10 +214,10 @@ public class Control {
 
     public static void lda(byte r, byte ix, byte addr, byte indirect) {
         int ea = computeEA(ix, addr, indirect, 3);
-        int value = mem.readWord(ea); 
-        mem.GPR[r] = value;
+        int value = mem.readWord(ea);  // ✅ Read memory at EA
+        mem.GPR[r] = value;  // ✅ Store the fetched value, not EA
         mem.MAR = ea;
-        mem.MBR = value;  
+        mem.MBR = value;  // ✅ Store loaded value into MBR
         System.out.println("[DEBUG] LDA -> GPR[" + r + "] = " + mem.GPR[r]);
     }
     

@@ -221,21 +221,21 @@ public class GUI {
         updateRegisterDisplay();
     }
     public void updateGUI() {
-        textField_8.setText(String.valueOf(control.cpu.getPC()));
-        textField_9.setText(String.valueOf(control.cpu.getMAR()));
-        textField_10.setText(String.valueOf(control.cpu.getMBR()));
-        textField_11.setText(String.valueOf(control.cpu.getIR()));
-        textField_12.setText(String.valueOf(control.cpu.getCC()));
-        textField_13.setText(String.valueOf(control.cpu.getMFR()));
+        textField_8.setText(String.valueOf(Integer.toOctalString(control.cpu.getPC())));
+        textField_9.setText(String.valueOf(Integer.toOctalString(control.cpu.getMAR())));
+        textField_10.setText(String.valueOf(Integer.toOctalString(control.cpu.getMBR())));
+        textField_11.setText(String.valueOf(Integer.toOctalString(control.cpu.getIR())));
+        textField_12.setText(String.valueOf(Integer.toOctalString(control.cpu.getCC())));
+        textField_13.setText(String.valueOf(Integer.toOctalString(control.cpu.getMFR())));
     
-        textField.setText(String.valueOf(control.cpu.getGPR()[0]));
-        textField_1.setText(String.valueOf(control.cpu.getGPR()[1]));
-        textField_2.setText(String.valueOf(control.cpu.getGPR()[2]));
-        textField_3.setText(String.valueOf(control.cpu.getGPR()[3]));
+        textField.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[0])));
+        textField_1.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[1])));
+        textField_2.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[2])));
+        textField_3.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[3])));
     
-        textField_5.setText(String.valueOf(control.cpu.getIX()[0]));
-        textField_6.setText(String.valueOf(control.cpu.getIX()[1]));
-        textField_7.setText(String.valueOf(control.cpu.getIX()[2]));
+        textField_5.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[0])));
+        textField_6.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[1])));
+        textField_7.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[2])));
     
         System.out.println("[DEBUG] GUI Updated: PC=" + control.cpu.getPC());
     }
@@ -254,21 +254,21 @@ public class GUI {
         System.out.println("IXRs: " + mem.IX[0] + ", " + mem.IX[1] + ", " + mem.IX[2]);
     
         // Update GUI
-        textField_8.setText(String.valueOf(mem.PC));
-        textField_9.setText(String.valueOf(mem.MAR));
-        textField_10.setText(String.valueOf(mem.MBR));
-        textField_11.setText(String.valueOf(mem.IR));
-        textField_12.setText(String.valueOf(mem.CC));
-        textField_13.setText(String.valueOf(mem.MFR));
+        textField_8.setText(String.valueOf(Integer.toOctalString(mem.PC)));
+        textField_9.setText(String.valueOf(Integer.toOctalString(mem.MAR)));
+        textField_10.setText(String.valueOf(Integer.toOctalString(mem.MBR)));
+        textField_11.setText(String.valueOf(Integer.toOctalString(mem.IR)));
+        textField_12.setText(String.valueOf(Integer.toOctalString(mem.CC)));
+        textField_13.setText(String.valueOf(Integer.toOctalString(mem.MFR)));
     
-        textField.setText(String.valueOf(mem.GPR[0]));
-        textField_1.setText(String.valueOf(mem.GPR[1]));
-        textField_2.setText(String.valueOf(mem.GPR[2]));
-        textField_3.setText(String.valueOf(mem.GPR[3]));
+        textField.setText(String.valueOf(Integer.toOctalString(mem.GPR[0])));
+        textField_1.setText(String.valueOf(Integer.toOctalString(mem.GPR[1])));
+        textField_2.setText(String.valueOf(Integer.toOctalString(mem.GPR[2])));
+        textField_3.setText(String.valueOf(Integer.toOctalString(mem.GPR[3])));
     
-        textField_5.setText(String.valueOf(mem.IX[0]));
-        textField_6.setText(String.valueOf(mem.IX[1]));
-        textField_7.setText(String.valueOf(mem.IX[2]));
+        textField_5.setText(String.valueOf(Integer.toOctalString(mem.IX[0])));
+        textField_6.setText(String.valueOf(Integer.toOctalString(mem.IX[1])));
+        textField_7.setText(String.valueOf(Integer.toOctalString(mem.IX[2])));
     }
 
     
