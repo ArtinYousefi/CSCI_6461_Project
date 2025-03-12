@@ -361,7 +361,7 @@ public class Assembler {
         }
         if (parts.length > 1) {
             try {
-            	al = Integer.parseInt(parts[1]); // Second operand is index register
+            	count = Integer.parseInt(parts[1]); // Second operand is index register
             } catch (NumberFormatException ignored) {}
         }
         if (parts.length > 2) {
@@ -371,7 +371,7 @@ public class Assembler {
         }
         if (parts.length > 3) {
             try {
-            	count = Integer.parseInt(parts[3]); // Fourth operand (optional) is indirect flag
+            	al = Integer.parseInt(parts[3]); // Fourth operand (optional) is indirect flag
             } catch (NumberFormatException ignored) {}
         }
     
