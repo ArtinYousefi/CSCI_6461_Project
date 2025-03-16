@@ -1,27 +1,3 @@
-; Program 1: Closest Number Finder
-000012 102106   ; IN R0, 0   (Read from keyboard)
-000013 002027   ; STR R0, 0, 20  (Store input at memory[20])
-000014 102106   ; IN R1, 0
-000015 002031   ; STR R1, 0, 21
-000016 102106   ; IN R2, 0
-000017 002032   ; STR R2, 0, 22
-000020 102106   ; IN R3, 0
-000021 002033   ; STR R3, 0, 23
-...
-000040 102106   ; IN R0, 0   (Read target number)
-000041 003047   ; LDR R1, 0, 20   (Load first stored number)
-000042 007050   ; SMR R1, 0, 40   (Find difference)
-000043 002067   ; STR R1, 0, 50   (Store difference)
-000044 003051   ; LDR R2, 0, 21
-000045 007050   ; SMR R2, 0, 40
-000046 002071   ; STR R2, 0, 51
-000047 003067   ; LDR R3, 0, 50
-000050 020100   ; JGE R3, 0, 51
-000051 006027   ; LDA R0, 0, 20
-000052 130100   ; JMA 100
-000100 102201   ; OUT R0, 1  (Print closest number)
-000101 006000   ; HLT
-; Program 2: Word Search in a Paragraph
 000150 104202   ; LDX 1, 200   (Load paragraph base)
 000151 102102   ; IN R0, 2     (Read sentence from file)
 000152 002302   ; STR R0, 1, 0 (Store at memory[200])
@@ -76,4 +52,3 @@
 000154 102201   ; OUT R0, 1
 000155 130200   ; JMA 200
 000200 006000   ; HLT
-
