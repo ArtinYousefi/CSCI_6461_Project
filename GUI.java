@@ -1,371 +1,276 @@
+package tryingtowork;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JButton;
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 import java.awt.Font;
+import javax.swing.table.DefaultTableModel;
 
-public class GUI implements ActionListener{
+public class GUI {
 
-	private JFrame frmFrontPanel;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_4;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
-	private JTextField textField_11;
-	private JTextField textField_12;
-	private JTextField textField_13;
-	private JTextArea textArea;
-	private JTextArea textArea_1;
-	private JTextArea textArea_2;
-	private JTextArea textArea_3;
-	private JButton btnNewButton;
-	private JButton btnNewButton_1;
-	private JButton btnNewButton_2;
-	private JButton btnNewButton_3;
-	private JLabel lblNewLabel;
-	private JLabel lblNewLabel_1;
-	private JLabel lblIxr;
-	private JButton btnNewButton_1_1;
-	private JTextArea textArea_1_1;
-	private JTextArea textArea_2_1;
-	private JButton btnNewButton_2_1; 
-	private JTextArea textArea_3_1;
-	private JButton btnNewButton_3_1;
-	private JLabel lblNewLabel_2;
-	private JTextArea textArea_1_1_1; 
-	private JButton btnNewButton_1_1_1;
-	private JTextArea textArea_1_1_2;
-	private JButton btnNewButton_1_1_2;
-	private JTextArea textArea_1_1_3;
-	private JButton btnNewButton_1_1_3; 
-	private JTextArea textArea_1_1_4;
-	private JButton btnNewButton_1_1_4; 
-	private JTextArea textArea_1_1_4_1;
-	private JTextArea textArea_1_1_4_2;
-	private JLabel lblNewLabel_3;
-	private JButton btnNewButton_3_2; 
-	private JLabel lblNewLabel_3_1;
-	private JButton btnNewButton_3_2_1; 
-	public static Control control;
-	
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUI window = new GUI();
-					window.frmFrontPanel.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    public JFrame frmFrontPanel;
+    public static JTextField textField, textField_1, textField_2, textField_3, textField_5, textField_6, textField_7;
+    public static JTextField textField_4, textField_8, textField_9, textField_10, textField_11, textField_12, textField_13;
+    private JTable memoryTable;
+    private DefaultTableModel memoryModel;
+    public static Control control;
 
-	/**
-	 * Create the application.
-	 */
-	public GUI() {
-		initialize();
-		control = new Control();
-	}
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                GUI window = new GUI();
+                window.frmFrontPanel.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frmFrontPanel = new JFrame();
-		frmFrontPanel.getContentPane().setBackground(new Color(204, 153, 255));
-		frmFrontPanel.setTitle("Front Panel");
-		frmFrontPanel.setBounds(100, 100, 1041, 560);
-		frmFrontPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmFrontPanel.getContentPane().setLayout(null);
-		
-		textArea = new JTextArea();
-		textArea.setText("0");
-		textArea.setBounds(25, 88, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea);
-		
-		textArea_1 = new JTextArea();
-		textArea_1.setText("1");
-		textArea_1.setBounds(25, 126, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_1);
-		
-		textArea_2 = new JTextArea();
-		textArea_2.setText("2");
-		textArea_2.setBounds(25, 164, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_2);
-		
-		textArea_3 = new JTextArea();
-		textArea_3.setText("3");
-		textArea_3.setBounds(25, 202, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_3);
-		
-		textField = new JTextField();
-		textField.setBounds(54, 91, 96, 19);
-		frmFrontPanel.getContentPane().add(textField);
-		textField.setColumns(10);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(54, 129, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_1);
-		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(54, 167, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_2);
-		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
-		textField_3.setBounds(54, 205, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_3);
-		
-		btnNewButton = new JButton("");		
-		btnNewButton.setForeground(Color.BLUE);
-		btnNewButton.setBackground(Color.BLUE);
-		btnNewButton.setBounds(153, 90, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton);
-		
-		btnNewButton_1 = new JButton("");
-		btnNewButton_1.setForeground(Color.BLUE);
-		btnNewButton_1.setBackground(Color.BLUE);
-		btnNewButton_1.setBounds(153, 128, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1);
-		
-		btnNewButton_2 = new JButton("");
-		btnNewButton_2.setForeground(Color.BLUE);
-		btnNewButton_2.setBackground(Color.BLUE);
-		btnNewButton_2.setBounds(153, 166, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_2);
-		
-		btnNewButton_3 = new JButton("");
-		btnNewButton_3.setForeground(Color.BLUE);
-		btnNewButton_3.setBackground(Color.BLUE);
-		btnNewButton_3.setBounds(153, 204, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_3);
-		
-		lblNewLabel = new JLabel("GPR");
-		lblNewLabel.setBounds(72, 68, 45, 13);
-		frmFrontPanel.getContentPane().add(lblNewLabel);
-		
-		lblNewLabel_1 = new JLabel("CSCI 6461 Machine Simulator");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel_1.setBounds(372, 10, 282, 36);
-		frmFrontPanel.getContentPane().add(lblNewLabel_1);
-		
-		lblIxr = new JLabel("IXR");
-		lblIxr.setBounds(273, 68, 45, 13);
-		frmFrontPanel.getContentPane().add(lblIxr);
-		
-		btnNewButton_1_1 = new JButton("");
-		btnNewButton_1_1.setForeground(Color.BLUE);
-		btnNewButton_1_1.setBackground(Color.BLUE);
-		btnNewButton_1_1.setBounds(354, 128, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1_1);
-		
-		textField_5 = new JTextField();
-		textField_5.setColumns(10);
-		textField_5.setBounds(255, 129, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_5);
-		
-		textArea_1_1 = new JTextArea();
-		textArea_1_1.setText("1");
-		textArea_1_1.setBounds(226, 126, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1);
-		
-		textArea_2_1 = new JTextArea();
-		textArea_2_1.setText("2");
-		textArea_2_1.setBounds(226, 164, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_2_1);
-		
-		textField_6 = new JTextField();
-		textField_6.setColumns(10);
-		textField_6.setBounds(255, 167, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_6);
-		
-		btnNewButton_2_1 = new JButton("");
-		btnNewButton_2_1.setForeground(Color.BLUE);
-		btnNewButton_2_1.setBackground(Color.BLUE);
-		btnNewButton_2_1.setBounds(354, 166, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_2_1);
+    /**
+     * Create the application.
+     */
+    public GUI() {
+        initialize();
+        System.out.println("[GUI DEBUG] Initializing GUI...");
+        control = new Control(this);
+        System.out.println("[GUI DEBUG] Control instance created.");
+    }
 
-		textArea_3_1 = new JTextArea();
-		textArea_3_1.setText("3");
-		textArea_3_1.setBounds(226, 202, 19, 28);
-		frmFrontPanel.getContentPane().add(textArea_3_1);
-		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(255, 205, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_7);
-		
-		btnNewButton_3_1 = new JButton("");
-		btnNewButton_3_1.setForeground(Color.BLUE);
-		btnNewButton_3_1.setBackground(Color.BLUE);
-		btnNewButton_3_1.setBounds(354, 204, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_3_1);
-		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(115, 401, 490, 28);
-		frmFrontPanel.getContentPane().add(textField_4);
-		
-		lblNewLabel_2 = new JLabel("Load File");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_2.setBounds(54, 398, 73, 28);
-		frmFrontPanel.getContentPane().add(lblNewLabel_2);
-		
-		textArea_1_1_1 = new JTextArea();
-		textArea_1_1_1.setText("PC");
-		textArea_1_1_1.setBounds(448, 88, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_1);
-		
-		textField_8 = new JTextField();
-		textField_8.setColumns(10);
-		textField_8.setBounds(487, 91, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_8);
-		
-		btnNewButton_1_1_1 = new JButton("");
-		btnNewButton_1_1_1.setForeground(Color.BLUE);
-		btnNewButton_1_1_1.setBackground(Color.BLUE);
-		btnNewButton_1_1_1.setBounds(586, 90, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1_1_1);
-		
-		textArea_1_1_2 = new JTextArea();
-		textArea_1_1_2.setText("MAR");
-		textArea_1_1_2.setBounds(448, 126, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_2);
-		
-		textField_9 = new JTextField();
-		textField_9.setColumns(10);
-		textField_9.setBounds(487, 129, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_9);
-		
-		btnNewButton_1_1_2 = new JButton("");
-		btnNewButton_1_1_2.setForeground(Color.BLUE);
-		btnNewButton_1_1_2.setBackground(Color.BLUE);
-		btnNewButton_1_1_2.setBounds(586, 128, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1_1_2);
-		
-		textArea_1_1_3 = new JTextArea();
-		textArea_1_1_3.setText("MBR");
-		textArea_1_1_3.setBounds(448, 164, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_3);
-		
-		textField_10 = new JTextField();
-		textField_10.setColumns(10);
-		textField_10.setBounds(487, 167, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_10);
-		
-		btnNewButton_1_1_3 = new JButton("");
-		btnNewButton_1_1_3.setForeground(Color.BLUE);
-		btnNewButton_1_1_3.setBackground(Color.BLUE);
-		btnNewButton_1_1_3.setBounds(586, 166, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1_1_3);
-		
-		textArea_1_1_4 = new JTextArea();
-		textArea_1_1_4.setText("IR");
-		textArea_1_1_4.setBounds(448, 202, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_4);
-		
-		textField_11 = new JTextField();
-		textField_11.setColumns(10);
-		textField_11.setBounds(487, 205, 96, 19);
-		frmFrontPanel.getContentPane().add(textField_11);
-		
-		btnNewButton_1_1_4 = new JButton("");
-		btnNewButton_1_1_4.setForeground(Color.BLUE);
-		btnNewButton_1_1_4.setBackground(Color.BLUE);
-		btnNewButton_1_1_4.setBounds(586, 204, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_1_1_4);
-		
-		textArea_1_1_4_1 = new JTextArea();
-		textArea_1_1_4_1.setText("CC");
-		textArea_1_1_4_1.setBounds(477, 235, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_4_1);
-		
-		textField_12 = new JTextField();
-		textField_12.setColumns(10);
-		textField_12.setBounds(516, 238, 89, 19);
-		frmFrontPanel.getContentPane().add(textField_12);
-		
-		textArea_1_1_4_2 = new JTextArea();
-		textArea_1_1_4_2.setText("MFR");
-		textArea_1_1_4_2.setBounds(477, 275, 29, 28);
-		frmFrontPanel.getContentPane().add(textArea_1_1_4_2);
-		
-		textField_13 = new JTextField();
-		textField_13.setColumns(10);
-		textField_13.setBounds(516, 278, 89, 19);
-		frmFrontPanel.getContentPane().add(textField_13);
-		
-		lblNewLabel_3 = new JLabel("Init");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_3.setBounds(25, 338, 29, 21);
-		frmFrontPanel.getContentPane().add(lblNewLabel_3);
-		
-		btnNewButton_3_2 = new JButton("");
-		btnNewButton_3_2.setForeground(Color.BLUE);
-		btnNewButton_3_2.setBackground(Color.BLUE);
-		btnNewButton_3_2.setBounds(55, 338, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_3_2);
-		btnNewButton_3_2.addActionListener(new ActionListener() {
+    /**
+     * Initialize the contents of the frame.
+     */
+    private void initialize() {
+        frmFrontPanel = new JFrame();
+        frmFrontPanel.getContentPane().setBackground(new Color(204, 153, 255));
+        frmFrontPanel.setTitle("CSCI 6461 Machine Simulator");
+        frmFrontPanel.setBounds(100, 100, 900, 550);
+        frmFrontPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frmFrontPanel.getContentPane().setLayout(null);
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-					control.loadLF("src//load4.txt");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		    }
-		});
-		
-		lblNewLabel_3_1 = new JLabel("Run");
-		lblNewLabel_3_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel_3_1.setBounds(84, 338, 29, 21);
-		frmFrontPanel.getContentPane().add(lblNewLabel_3_1);
-		
-		btnNewButton_3_2_1 = new JButton("");
-		btnNewButton_3_2_1.setForeground(Color.BLUE);
-		btnNewButton_3_2_1.setBackground(Color.BLUE);
-		btnNewButton_3_2_1.setBounds(114, 338, 19, 21);
-		frmFrontPanel.getContentPane().add(btnNewButton_3_2_1);
-		btnNewButton_3_2_1.addActionListener(new ActionListener() {
+        JLabel lblTitle = new JLabel("CSCI 6461 Machine Simulator");
+        lblTitle.setFont(new Font("Tahoma", Font.BOLD, 16));
+        lblTitle.setBounds(300, 10, 300, 30);
+        frmFrontPanel.getContentPane().add(lblTitle);
 
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        control.runSimulator();
-		    }
-		});
-		
-	}
+        JButton btnLoadFile = new JButton("Load");
+        btnLoadFile.setBounds(50, 450, 100, 30);
+        frmFrontPanel.getContentPane().add(btnLoadFile);
+        btnLoadFile.addActionListener(e -> openFileChooser());
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+        JButton btnStore = new JButton("Store");
+        btnStore.setBounds(160, 450, 100, 30);
+        frmFrontPanel.getContentPane().add(btnStore);
+        btnStore.addActionListener(e -> storeData());
 
-		
-	}
+        JButton btnRun = new JButton("Run");
+        btnRun.setBounds(270, 450, 100, 30);
+        frmFrontPanel.getContentPane().add(btnRun);
+        btnRun.addActionListener(e -> runSimulator());
+
+        JButton btnStep = new JButton("Step");
+        btnStep.setBounds(380, 450, 100, 30);
+        frmFrontPanel.getContentPane().add(btnStep);
+        btnStep.addActionListener(e -> stepExecution());
+
+        JButton btnHalt = new JButton("Halt");
+        btnHalt.setBounds(490, 450, 100, 30);
+        frmFrontPanel.getContentPane().add(btnHalt);
+        btnHalt.addActionListener(e -> haltExecution());
+
+
+        // Memory Table
+        memoryModel = new DefaultTableModel(new String[]{"Address", "Value"}, 0);
+        memoryTable = new JTable(memoryModel);
+        JScrollPane scrollPane = new JScrollPane(memoryTable);
+        scrollPane.setBounds(500, 50, 350, 300);
+        frmFrontPanel.getContentPane().add(scrollPane);
+
+        // Register Labels and TextFields
+        JLabel lblPC = new JLabel("PC:");
+        lblPC.setBounds(50, 50, 40, 25);
+        frmFrontPanel.getContentPane().add(lblPC);
+        textField_8 = new JTextField();
+        textField_8.setBounds(100, 50, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_8);
+
+        JLabel lblMAR = new JLabel("MAR:");
+        lblMAR.setBounds(50, 90, 40, 25);
+        frmFrontPanel.getContentPane().add(lblMAR);
+        textField_9 = new JTextField();
+        textField_9.setBounds(100, 90, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_9);
+
+        JLabel lblMBR = new JLabel("MBR:");
+        lblMBR.setBounds(50, 130, 40, 25);
+        frmFrontPanel.getContentPane().add(lblMBR);
+        textField_10 = new JTextField();
+        textField_10.setBounds(100, 130, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_10);
+
+        JLabel lblIR = new JLabel("IR:");
+        lblIR.setBounds(50, 170, 40, 25);
+        frmFrontPanel.getContentPane().add(lblIR);
+        textField_11 = new JTextField();
+        textField_11.setBounds(100, 170, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_11);
+
+        JLabel lblCC = new JLabel("CC:");
+        lblCC.setBounds(50, 210, 40, 25);
+        frmFrontPanel.getContentPane().add(lblCC);
+        textField_12 = new JTextField();
+        textField_12.setBounds(100, 210, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_12);
+
+        JLabel lblMFR = new JLabel("MFR:");
+        lblMFR.setBounds(50, 250, 40, 25);
+        frmFrontPanel.getContentPane().add(lblMFR);
+        textField_13 = new JTextField();
+        textField_13.setBounds(100, 250, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_13);
+
+        // GPRs (General Purpose Registers)
+        JLabel lblGPR = new JLabel("GPR");
+        lblGPR.setBounds(250, 50, 40, 25);
+        frmFrontPanel.getContentPane().add(lblGPR);
+        textField = new JTextField();
+        textField.setBounds(300, 50, 100, 25);
+        frmFrontPanel.getContentPane().add(textField);
+        textField_1 = new JTextField();
+        textField_1.setBounds(300, 90, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_1);
+        textField_2 = new JTextField();
+        textField_2.setBounds(300, 130, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_2);
+        textField_3 = new JTextField();
+        textField_3.setBounds(300, 170, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_3);
+
+        // IXRs (Index Registers)
+        JLabel lblIXR = new JLabel("IXR");
+        lblIXR.setBounds(250, 210, 40, 25);
+        frmFrontPanel.getContentPane().add(lblIXR);
+        textField_5 = new JTextField();
+        textField_5.setBounds(300, 210, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_5);
+        textField_6 = new JTextField();
+        textField_6.setBounds(300, 250, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_6);
+        textField_7 = new JTextField();
+        textField_7.setBounds(300, 290, 100, 25);
+        frmFrontPanel.getContentPane().add(textField_7);
+    }
+
+    private void openFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(frmFrontPanel);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                control.loadLF(selectedFile.getAbsolutePath());
+                updateMemoryDisplay();
+                updateRegisterDisplay();
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(frmFrontPanel, "Error loading file!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+
+    private void runSimulator() {
+        control.runSimulator();
+        updateMemoryDisplay();
+        updateRegisterDisplay();
+    }
+
+    private void storeData() {
+        control.storeData();
+        updateMemoryDisplay();
+    }
+
+
+    private void stepExecution() {
+        control.stepSimulator();
+        updateMemoryDisplay();
+        updateRegisterDisplay();
+    }
+
+    private void haltExecution() {
+        control.haltSimulator();
+        JOptionPane.showMessageDialog(frmFrontPanel, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    
+    public void updateMemoryDisplay() {
+        memoryModel.setRowCount(0);
+        Memory mem = control.getMemory();
+    
+        System.out.println("Memory Contents:");
+        for (int i = 0; i < 20; i++) { // Display first 20 memory locations
+            int value = mem.readWord(i);
+            memoryModel.addRow(new Object[]{String.format("%04o", i), String.format("%04o", value)});
+            System.out.println("Address: " + i + " -> Value: " + value);
+        }
+    
+        updateRegisterDisplay();
+    }
+    public void updateGUI() {
+        textField_8.setText(String.valueOf(Integer.toOctalString(control.cpu.getPC())));
+        textField_9.setText(String.valueOf(Integer.toOctalString(control.cpu.getMAR())));
+        textField_10.setText(String.valueOf(Integer.toOctalString(control.cpu.getMBR())));
+        textField_11.setText(String.valueOf(Integer.toOctalString(control.cpu.getIR())));
+        textField_12.setText(String.valueOf(Integer.toOctalString(control.cpu.getCC())));
+        textField_13.setText(String.valueOf(Integer.toOctalString(control.cpu.getMFR())));
+    
+        textField.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[0])));
+        textField_1.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[1])));
+        textField_2.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[2])));
+        textField_3.setText(String.valueOf(Integer.toOctalString(control.cpu.getGPR()[3])));
+    
+        textField_5.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[0])));
+        textField_6.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[1])));
+        textField_7.setText(String.valueOf(Integer.toOctalString(control.cpu.getIX()[2])));
+    
+        System.out.println("[DEBUG] GUI Updated: PC=" + control.cpu.getPC());
+    }
+    
+
+    public void updateRegisterDisplay() {
+        Memory mem = control.getMemory();
+    
+        // Debugging: Print register values
+        System.out.println("Updating Registers:");
+        System.out.println("PC: " + mem.PC);
+        System.out.println("MAR: " + mem.MAR);
+        System.out.println("MBR: " + mem.MBR);
+        System.out.println("IR: " + mem.IR);
+        System.out.println("GPRs: " + mem.GPR[0] + ", " + mem.GPR[1] + ", " + mem.GPR[2] + ", " + mem.GPR[3]);
+        System.out.println("IXRs: " + mem.IX[0] + ", " + mem.IX[1] + ", " + mem.IX[2]);
+    
+        // Update GUI
+        textField_8.setText(String.valueOf(Integer.toOctalString(mem.PC)));
+        textField_9.setText(String.valueOf(Integer.toOctalString(mem.MAR)));
+        textField_10.setText(String.valueOf(Integer.toOctalString(mem.MBR)));
+        textField_11.setText(String.valueOf(Integer.toOctalString(mem.IR)));
+        textField_12.setText(String.valueOf(Integer.toOctalString(mem.CC)));
+        textField_13.setText(String.valueOf(Integer.toOctalString(mem.MFR)));
+    
+        textField.setText(String.valueOf(Integer.toOctalString(mem.GPR[0])));
+        textField_1.setText(String.valueOf(Integer.toOctalString(mem.GPR[1])));
+        textField_2.setText(String.valueOf(Integer.toOctalString(mem.GPR[2])));
+        textField_3.setText(String.valueOf(Integer.toOctalString(mem.GPR[3])));
+    
+        textField_5.setText(String.valueOf(Integer.toOctalString(mem.IX[0])));
+        textField_6.setText(String.valueOf(Integer.toOctalString(mem.IX[1])));
+        textField_7.setText(String.valueOf(Integer.toOctalString(mem.IX[2])));
+    }
+
+    
 }
