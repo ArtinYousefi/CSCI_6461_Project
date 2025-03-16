@@ -4,10 +4,17 @@ public class CPU {
     private int[] GPR = new int[4]; // General Purpose Registers
     private int[] IX = new int[3];  // Index Registers
     private boolean halted = false; // Halt flag
+    private static final int DV_SIZE = 32;
+    public int[] devices = new int[32]; //Simulating devices
 
+    
     public CPU(Memory memory) {
         this.memory = memory;
         this.PC = 0;
+
+        for (int i = 0; i < DV_SIZE; i++) {
+        	devices[i] = 0;
+        }
     }
 
     /** Fetch the instruction from memory (with cache integration) */
