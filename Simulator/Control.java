@@ -30,9 +30,9 @@ public class Control {
         mem.MBR = mem.readWord(mem.MAR);
         mem.IR = mem.MBR;
     
-        System.out.println("[DEBUG] Step Executing at PC: " + mem.PC + " -> " + Integer.toOctalString(mem.IR));
+        System.out.println("[DEBUG] Step Executing at PC: " + Integer.toOctalString(mem.PC) +
+                           " -> Instruction: " + Integer.toOctalString(mem.IR));
     
-        // Decode instruction
         String binary = String.format("%16s", Integer.toBinaryString(mem.IR)).replace(" ", "0");
         String op = binary.substring(0, 6);
         int reg = Integer.parseInt(binary.substring(6, 8), 2);
@@ -45,7 +45,8 @@ public class Control {
         int ea = computeEA((byte) ix, (byte) addr, (byte) indirect, Integer.parseInt(op, 2));
         mem.MAR = ea;
     
-        // **Execute instruction (step by step)**
+        boolean jumped = false;
+    
         switch (op) {
             case "000001": // LDR
                 ldr((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
@@ -66,11 +67,9 @@ public class Control {
                 if (mem.GPR[reg] == 0) {
                     int jumpAddr = mem.readWord(ea);
                     System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
-                    
                     if (jumpAddr != 0) {  
-                        mem.PC = jumpAddr;  
-                        gui.updateGUI();
-                        return;  
+                        mem.PC = jumpAddr;
+                        jumped = true;
                     }
                 }
                 System.out.println("[DEBUG] JZ Not Taken");
@@ -83,10 +82,14 @@ public class Control {
                 System.out.println("[ERROR] Unknown Opcode: " + op);
         }
     
-        mem.PC++;
+        if (!jumped) {
+            mem.PC++;  // Increment PC only if no jump occurred
+        }
+    
         printRegisters();
-        gui.updateGUI();  
+        gui.updateGUI();
     }
+    
 
   
     
@@ -126,6 +129,7 @@ public class Control {
         System.out.println("[DEBUG] Final EA: " + effectiveAddress);
         return effectiveAddress;
     }
+    
     
     
     
@@ -187,20 +191,22 @@ public class Control {
         mem.GPR[r] = mem.readWord(ea);
         mem.MAR = ea;
         mem.MBR = mem.GPR[r];
-        System.out.println("[DEBUG] LDR -> GPR[" + r + "] = " + mem.GPR[r]);
+        System.out.println("[DEBUG] LDR -> GPR[" + r + "] = " + Integer.toOctalString(mem.GPR[r]));
     }
+    
 
     public static void ldx(byte ix, byte addr, byte indirect) {
         int ea = computeEA(ix, addr, indirect, 33);
-        if (ix > 0 && ix <= 3) {  // Ensure IX is valid
+        if (ix > 0 && ix <= 3) {
             mem.IX[ix - 1] = mem.readWord(ea);
             mem.MAR = ea;
             mem.MBR = mem.IX[ix - 1];
-            System.out.println("[DEBUG] LDX -> IXR[" + (ix - 1) + "] = " + mem.IX[ix - 1]);
+            System.out.println("[DEBUG] LDX -> IXR[" + (ix - 1) + "] = " + Integer.toOctalString(mem.IX[ix - 1]));
         } else {
             System.out.println("[ERROR] Invalid IXR index: " + ix);
         }
     }
+    
 
     public static void stx(byte ix, byte addr, byte indirect) {
 		mem.writeWord(mem.MAR, mem.IX[ix-1]);
@@ -214,28 +220,43 @@ public class Control {
 
     public static void lda(byte r, byte ix, byte addr, byte indirect) {
         int ea = computeEA(ix, addr, indirect, 3);
-        int value = mem.readWord(ea);  // ✅ Read memory at EA
-        mem.GPR[r] = value;  // ✅ Store the fetched value, not EA
+        int value = mem.readWord(ea); 
+        mem.GPR[r] = value; 
         mem.MAR = ea;
-        mem.MBR = value;  // ✅ Store loaded value into MBR
+        mem.MBR = value; 
         System.out.println("[DEBUG] LDA -> GPR[" + r + "] = " + mem.GPR[r]);
     }
+
+    public int readMemory(int address) {
+        return mem.readWord(address);  // Now goes through cache
+    }
+    
+    public void writeMemory(int address, int data) {
+        mem.writeWord(address, data);  // Updates cache and memory
+    }
+    
     
     
     
 
     // **Main Execution Loop**
-    public static void runSimulator() {
-        while (mem.readWord(mem.PC) != 0) {
+    public void runSimulator() {
+        while (!cpu.isHalted()) {  // Check if CPU is halted instead of Memory
+            if (mem.readWord(mem.PC) == 0) {  // Check if HLT instruction (000000)
+                System.out.println("[DEBUG] HLT Executed at PC: " + Integer.toOctalString(mem.PC) + ". Stopping Simulation.");
+                JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                cpu.setHalted(true);  // Ensure CPU halts
+                return;
+            }
+    
             mem.MAR = mem.PC;
             mem.MBR = mem.readWord(mem.MAR);
             mem.IR = mem.MBR;
     
-            System.out.println("[DEBUG] Executing Instruction at PC: " + mem.PC + " -> " + Integer.toOctalString(mem.IR));
+            System.out.println("[DEBUG] Running at PC: " + Integer.toOctalString(mem.PC) +
+                               " -> Instruction: " + Integer.toOctalString(mem.IR));
     
             String binary = String.format("%16s", Integer.toBinaryString(mem.IR)).replace(" ", "0");
-            System.out.println("[DEBUG] Binary Instruction: " + binary);
-    
             String op = binary.substring(0, 6);
             int reg = Integer.parseInt(binary.substring(6, 8), 2);
             int ix = Integer.parseInt(binary.substring(8, 10), 2);
@@ -247,56 +268,71 @@ public class Control {
             int ea = computeEA((byte) ix, (byte) addr, (byte) indirect, Integer.parseInt(op, 2));
             mem.MAR = ea;
     
-            // **Instruction Execution using if-else**
-            if (op.equals("000001")) {  // LDR
-                ldr((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
-            } else if (op.equals("000010")) {  // STR
-                str((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
-            } else if (op.equals("000011")) {  // LDA
-                lda((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
-            } else if (op.equals("100001")) {  // LDX
-                ldx((byte) ix, (byte) addr, (byte) indirect);
-            } else if (op.equals("100010")) {  // STX
-                stx((byte) ix, (byte) addr, (byte) indirect);
-            } else if (op.equals("001000")) {  // JZ (Jump if Zero)
-                if (mem.GPR[reg] == 0) {
-                    int jumpAddr = mem.readWord(ea);
-                    System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
-                    
-                    if (jumpAddr != 0) {  
-                        mem.PC = jumpAddr; 
-                        continue; 
+            boolean jumped = false;
+    
+            switch (op) {
+                case "000001": // LDR
+                    ldr((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                    break;
+                case "000010": // STR
+                    str((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                    break;
+                case "000011": // LDA
+                    lda((byte) reg, (byte) ix, (byte) addr, (byte) indirect);
+                    break;
+                case "100001": // LDX
+                    ldx((byte) ix, (byte) addr, (byte) indirect);
+                    break;
+                case "100010": // STX
+                    stx((byte) ix, (byte) addr, (byte) indirect);
+                    break;
+                    case "001000": // JZ (Jump if Zero)
+                    if (mem.GPR[reg] == 0) {
+                        int jumpAddr = mem.readWord(ea);
+                        System.out.println("[DEBUG] JZ Taken: Jumping to Mem[" + ea + "] -> " + jumpAddr);
+                        if (jumpAddr == 0) {  
+                            System.out.println("[WARNING] JZ jumped to address 0. Possible unintended behavior.");
+                        } else {
+                            mem.PC = jumpAddr;
+                            jumped = true;
+                        }
                     }
-                }
-                System.out.println("[DEBUG] JZ Not Taken");
-            } else if (op.equals("000000")) {  // HLT (Halt)
-                System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
-                return;
-            } else {
-                System.out.println("[ERROR] Unknown Opcode: " + op);
+                    System.out.println("[DEBUG] JZ Not Taken");
+                    break;
+                case "000000": // HLT (Halt)
+                    System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
+                    JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    cpu.setHalted(true);  // Ensure CPU halts
+                    return;
+                default:
+                    System.out.println("[ERROR] Unknown Opcode: " + op);
             }
     
-            mem.PC++;
+            if (!jumped) {
+                mem.PC++;  // Increment PC only if no jump occurred
+            }
+    
             printRegisters();
+            gui.updateGUI();
         }
-    
-        System.out.println("[DEBUG] BEFORE EXECUTION: GPRs: " +
-            mem.GPR[0] + ", " + mem.GPR[1] + ", " + mem.GPR[2] + ", " + mem.GPR[3]);
-    
-        System.out.println("[DEBUG] Simulation Finished.");
     }
+    
+    
     
     public void storeData() {
         try {
-            int address = Integer.parseInt(gui.textField_9.getText()); // Get MAR value
-            int data = Integer.parseInt(gui.textField_10.getText()); // Get MBR value
+            int address = Integer.parseInt(gui.textField_9.getText()); 
+            int data = Integer.parseInt(gui.textField_10.getText());
     
-            mem.writeWord(address, data); // Store data in memory
-            gui.updateMemoryDisplay(); // Refresh the memory table
+            mem.writeWord(address, data);
+            System.out.println("[Control] Stored Address: " + address + " -> " + data);
+    
+            gui.updateCacheDisplay();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Invalid Input!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     
     // **Print Registers**
     public static void printRegisters() {

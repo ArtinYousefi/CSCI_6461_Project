@@ -10,22 +10,25 @@ public class CPU {
         this.PC = 0;
     }
 
-    /** Fetch the instruction from memory */
+    /** Fetch the instruction from memory (with cache integration) */
     public void fetch() {
         MAR = PC;  // Set MAR to PC
-        MBR = memory.readWord(MAR);  // Fetch instruction
+        MBR = memory.readWord(MAR);  // Fetch instruction (now cache-aware)
         IR = MBR;  // Load into IR
         PC++;  // Increment PC to next instruction
+
+        System.out.println("[CPU FETCH] PC=" + MAR + " | Fetched (octal): " + Integer.toOctalString(IR));
     }
+
+
 
     /** Decode the instruction (basic implementation) */
     public void decode() {
-        // Extract opcode and operands (assuming 16-bit instruction format)
         int opcode = (IR >> 12) & 0xF;  // Extract opcode (top 4 bits)
         int reg = (IR >> 10) & 0x3;  // Extract register (next 2 bits)
         int addr = IR & 0x3FF;  // Extract address (last 10 bits)
         
-        System.out.println("Decoded: Opcode=" + opcode + " Reg=" + reg + " Addr=" + addr);
+        System.out.println("[CPU DECODE] Opcode=" + opcode + " | Reg=" + reg + " | Addr=" + addr);
     }
 
     /** Execute the instruction */
@@ -36,20 +39,23 @@ public class CPU {
 
         switch (opcode) {
             case 1: // Load instruction
-                GPR[reg] = memory.readWord(addr);
+                GPR[reg] = memory.readWord(addr);  // Now cache-aware
+                System.out.println("[CPU EXECUTE] LOAD -> GPR[" + reg + "] = " + GPR[reg]);
                 break;
             case 2: // Store instruction
-                memory.writeWord(addr, GPR[reg]);
+                memory.writeWord(addr, GPR[reg]);  // Now cache-aware
+                System.out.println("[CPU EXECUTE] STORE -> Mem[" + addr + "] = " + GPR[reg]);
                 break;
             case 3: // Add
                 GPR[reg] += memory.readWord(addr);
+                System.out.println("[CPU EXECUTE] ADD -> GPR[" + reg + "] = " + GPR[reg]);
                 break;
             case 4: // Halt instruction
                 halted = true;
-                System.out.println("CPU Halted.");
+                System.out.println("[CPU EXECUTE] CPU Halted.");
                 break;
             default:
-                System.out.println("Unknown Opcode: " + opcode);
+                System.out.println("[CPU ERROR] Unknown Opcode: " + opcode);
                 break;
         }
     }

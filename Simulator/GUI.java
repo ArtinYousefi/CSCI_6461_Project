@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Formatter;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.table.DefaultTableModel;
@@ -16,6 +18,9 @@ public class GUI {
     private JTable memoryTable;
     private DefaultTableModel memoryModel;
     public static Control control;
+    private JScrollPane cacheScrollPane;
+    private JTextArea cacheTextArea; 
+    private DefaultTableModel cacheModel;
 
     /**
      * Launch the application.
@@ -39,6 +44,7 @@ public class GUI {
         System.out.println("[GUI DEBUG] Initializing GUI...");
         control = new Control(this);
         System.out.println("[GUI DEBUG] Control instance created.");
+       
     }
 
     /**
@@ -51,6 +57,22 @@ public class GUI {
         frmFrontPanel.setBounds(100, 100, 900, 550);
         frmFrontPanel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frmFrontPanel.getContentPane().setLayout(null);
+
+        JLabel lblCache = new JLabel("Cache Content");
+        lblCache.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblCache.setBounds(500, 40, 150, 25);
+        frmFrontPanel.getContentPane().add(lblCache);
+
+        // **New Cache Display using JTextArea**
+        cacheTextArea = new JTextArea();
+        cacheTextArea.setEditable(false);
+        cacheTextArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        cacheTextArea.setBackground(Color.WHITE);
+
+        cacheScrollPane = new JScrollPane(cacheTextArea);
+        cacheScrollPane.setBounds(500, 70, 350, 120); // Adjust size
+        frmFrontPanel.getContentPane().add(cacheScrollPane);
+        
 
         JLabel lblTitle = new JLabel("CSCI 6461 Machine Simulator");
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 16));
@@ -83,12 +105,12 @@ public class GUI {
         btnHalt.addActionListener(e -> haltExecution());
 
 
-        // Memory Table
-        memoryModel = new DefaultTableModel(new String[]{"Address", "Value"}, 0);
-        memoryTable = new JTable(memoryModel);
-        JScrollPane scrollPane = new JScrollPane(memoryTable);
-        scrollPane.setBounds(500, 50, 350, 300);
-        frmFrontPanel.getContentPane().add(scrollPane);
+        // // Memory Table
+        // memoryModel = new DefaultTableModel(new String[]{"Address", "Value"}, 0);
+        // memoryTable = new JTable(memoryModel);
+        // JScrollPane scrollPane = new JScrollPane(memoryTable);
+        // scrollPane.setBounds(500, 50, 350, 300);
+        // frmFrontPanel.getContentPane().add(scrollPane);
 
         // Register Labels and TextFields
         JLabel lblPC = new JLabel("PC:");
@@ -173,7 +195,8 @@ public class GUI {
             File selectedFile = fileChooser.getSelectedFile();
             try {
                 control.loadLF(selectedFile.getAbsolutePath());
-                updateMemoryDisplay();
+                //updateMemoryDisplay();
+                updateCacheDisplay();
                 updateRegisterDisplay();
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(frmFrontPanel, "Error loading file!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -184,20 +207,22 @@ public class GUI {
 
     private void runSimulator() {
         control.runSimulator();
-        updateMemoryDisplay();
+        //updateMemoryDisplay();
         updateRegisterDisplay();
+        updateCacheDisplay();
     }
 
     private void storeData() {
         control.storeData();
-        updateMemoryDisplay();
+       // updateMemoryDisplay();
     }
 
 
     private void stepExecution() {
         control.stepSimulator();
-        updateMemoryDisplay();
+        //updateMemoryDisplay();
         updateRegisterDisplay();
+        updateCacheDisplay();
     }
 
     private void haltExecution() {
@@ -207,19 +232,20 @@ public class GUI {
 
 
     
-    public void updateMemoryDisplay() {
-        memoryModel.setRowCount(0);
-        Memory mem = control.getMemory();
+    // public void updateMemoryDisplay() {
+    //     memoryModel.setRowCount(0);
+    //     Memory mem = control.getMemory();
     
-        System.out.println("Memory Contents:");
-        for (int i = 0; i < 20; i++) { // Display first 20 memory locations
-            int value = mem.readWord(i);
-            memoryModel.addRow(new Object[]{String.format("%04o", i), String.format("%04o", value)});
-            System.out.println("Address: " + i + " -> Value: " + value);
-        }
+    //     System.out.println("Memory Contents:");
+    //     for (int i = 0; i < 20; i++) { // Display first 20 memory locations
+    //         int value = mem.readWord(i);
+    //         memoryModel.addRow(new Object[]{String.format("%04o", i), String.format("%04o", value)});
+    //         System.out.println("Address: " + i + " -> Value: " + value);
+    //     }
     
-        updateRegisterDisplay();
-    }
+    //     updateRegisterDisplay();
+    //     updateCacheDisplay();  // Update cache display
+    // }
     public void updateGUI() {
         textField_8.setText(String.valueOf(Integer.toOctalString(control.cpu.getPC())));
         textField_9.setText(String.valueOf(Integer.toOctalString(control.cpu.getMAR())));
@@ -270,6 +296,30 @@ public class GUI {
         textField_6.setText(String.valueOf(Integer.toOctalString(mem.IX[1])));
         textField_7.setText(String.valueOf(Integer.toOctalString(mem.IX[2])));
     }
+
+public void updateCacheDisplay() {
+    Map<Integer, CacheBlock> cacheLines = control.getMemory().getCache();
+    StringBuilder cacheOutput = new StringBuilder();
+
+
+    for (Map.Entry<Integer, CacheBlock> entry : cacheLines.entrySet()) {
+        int tag = entry.getKey();
+        CacheBlock block = entry.getValue();
+
+        cacheOutput.append(String.format("%03o   ", tag));
+        for (int i = 0; i < 4; i++) {
+            cacheOutput.append(String.format("%06o  ", block.getData(i)));
+        }
+        cacheOutput.append("\n");
+    }
+
+    cacheTextArea.setText(cacheOutput.toString().trim());
+}
+
+    
+    
+    
+    
 
     
 }
