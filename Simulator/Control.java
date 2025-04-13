@@ -18,12 +18,16 @@ public class Control {
     private static List<String> fourthset = Arrays.asList("110001","110010","110011"); //devices
 
     public static  CPU cpu;
+    private static final int TRAP_ADDR = 2000; //start of trap table from 2000 to 2015  
+    private static int trapflag; //if 1, called from a trap
 
     public Control(GUI gui) {
         this.gui = gui;
         this.mem = new Memory();
         this.cpu = new CPU(mem);
 	jumped = false;
+        this.mem.writeWord(0, TRAP_ADDR); //setting mem 0 to point to trap table
+        trapflag = 0;
     }
 
     public void stepSimulator() {
@@ -197,6 +201,12 @@ public class Control {
             case "110011":	//CHK (Check Device Status to Register)  
             	System.out.println("CHK IS NOT REQUIRED FOR THIS PART OF THE PROJECT.");
             	break;		
+	    case "011000": //TRAP
+                mem.writeWord(2, mem.PC); //setting 2 to PC to use later NOT incrementing since we increment after this
+                mem.PC = mem.readWord(0) + addr; //getting address of code in trap table
+                stepSimulator();
+                mem.PC = mem.readWord(2); //set PC back to OG value and increment 
+                break;
             case "000000": // HLT (Halt)
                 System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
                 JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
@@ -752,7 +762,15 @@ public class Control {
                 	break;		
                 case "110011":	//CHK (Check Device Status to Register)  
                 	System.out.println("CHK IS NOT REQUIRED FOR THIS PART OF THE PROJECT.");
-                	break;		
+                	break;
+		case "011000":  //TRAP
+                    mem.writeWord(2, mem.PC); //setting 2 to PC to use later NOT incrementing since we increment after this
+                    mem.PC = mem.readWord(0) + addr; //getting address of code in trap table
+                    trapflag = 1; //to force exit the func
+                    runSimulator();
+                    trapflag = 0;
+                    mem.PC = mem.readWord(2); //set PC back to OG value and increment
+                    break;
                 case "000000": // HLT (Halt)
                     System.out.println("[DEBUG] HLT Executed. Stopping Simulation.");
                     JOptionPane.showMessageDialog(null, "Simulation Halted!", "Info", JOptionPane.INFORMATION_MESSAGE);
@@ -763,6 +781,10 @@ public class Control {
             
             mem.PC++;
             printRegisters();
+
+	    if (trapflag == 1) { //was called from trap
+            	return;
+            }
         }
     
         System.out.println("[DEBUG] BEFORE EXECUTION: GPRs: " +
