@@ -1,0 +1,66 @@
+- [c262f2b] Changed the README.md file in the Simulator directory to reflect the new changes made in the simulator. – by ArtinYousefi – Sun Apr 13 00:48:44 2025 -0400
+- [3487e5b] Added the design note and user guide for part 3 of the simulator. – by ArtinYousefi – Sun Apr 13 00:42:22 2025 -0400
+- [9566315] Deleted old DesignNote and UserGuide files, and added part 3's UserGuide and DesignNote – by ArtinYousefi – Sun Apr 13 00:36:21 2025 -0400
+- [09db4f9] Deleted the Design and UserGuide for Part 2, added the part 3 UserGuide and DesignNote. Added space at the end of the MANIFEST file for improved performance. – by ArtinYousefi – Sun Apr 13 00:33:56 2025 -0400
+- [8917dbd] Update README.md – by ArtinYousefi – Sat Apr 12 23:31:36 2025 -0400
+- [5120ff0] Update Control.java – by Madi252 – Sat Apr 12 22:39:06 2025 -0400
+- [52a0056] Add files via upload – by Ilakkiya V – Fri Apr 11 23:44:18 2025 -0400
+- [3e12f3b] Update README.md – by ArtinYousefi – Sun Mar 16 00:32:35 2025 -0400
+- [1810895] Add files via upload – by ArtinYousefi – Sun Mar 16 00:23:55 2025 -0400
+- [01123ec] Adding runnable jar file – by Madi252 – Sun Mar 16 00:22:22 2025 -0400
+- [30117a7] Added Test Files for Simulator – by ArtinYousefi – Sun Mar 16 00:08:04 2025 -0400
+- [b9a4bbd] Update Control.java – by Madi252 – Sun Mar 16 00:04:51 2025 -0400
+- [75c8e0c] Update CPU.java – by Madi252 – Sat Mar 15 23:38:20 2025 -0400
+- [965c5e7] Add files via upload – by Ilakkiya V – Sat Mar 15 23:32:27 2025 -0400
+- [93e3909] Delete Assembler/Assembler.jar.zip – by Madi252 – Sat Mar 15 23:26:52 2025 -0400
+- [2af62ef] Add files via upload – by Madi252 – Sat Mar 15 23:26:34 2025 -0400
+- [9626965] Update Assembler.java – by Madi252 – Tue Mar 11 22:42:15 2025 -0400
+- [8860a6c] Update Assembler.java – by Madi252 – Tue Mar 11 22:24:07 2025 -0400
+- [ab0d756] Add files via upload – by Ilakkiya V – Sat Mar 8 02:26:08 2025 -0500
+- [b45d524] Add files via upload – by Ilakkiya V – Tue Mar 4 02:11:59 2025 -0500
+- [a3df1f9] Add files via upload – by Ilakkiya V – Tue Mar 4 02:09:10 2025 -0500
+- [0589a0b] Add files via upload – by Ilakkiya V – Tue Mar 4 02:01:58 2025 -0500
+- [a57e33b] Update Memory.java – by Ilakkiya V – Tue Mar 4 02:01:25 2025 -0500
+- [2e1e624] Update Control.java – by Ilakkiya V – Tue Mar 4 02:00:57 2025 -0500
+- [ecb7c2f] updated versions – by Madi252 – Mon Mar 3 20:03:02 2025 -0500
+- [0e906dd] Rename UserGuideFULL.pdf to UserGuide.pdf – by Madi252 – Sun Mar 2 22:35:36 2025 -0500
+- [f81382a] Delete Simulator/UserGuide.pdf – by Madi252 – Sun Mar 2 22:35:28 2025 -0500
+- [2752d06] Rename DesignNote FULL.pdf to DesignNote.pdf – by Madi252 – Sun Mar 2 22:35:11 2025 -0500
+- [7efda40] Delete Simulator/DesignNote.pdf – by Madi252 – Sun Mar 2 22:34:58 2025 -0500
+- [b6724d8] updated userguide – by Madi252 – Sun Mar 2 22:34:35 2025 -0500
+- [6feedc5] updated design note to include control and gui – by Madi252 – Sun Mar 2 22:33:19 2025 -0500
+- [840a9a0] Update README.md – by Madi252 – Sun Mar 2 22:07:50 2025 -0500
+- [efa7ac1] Update README.md – by Madi252 – Sun Mar 2 22:07:24 2025 -0500
+- [0252b1f] Update README.md – by Madi252 – Sun Mar 2 21:32:17 2025 -0500
+- [89f8237] Update Memory.java – by Madi252 – Sun Mar 2 21:28:01 2025 -0500
+- [0bafd36] Add files via upload – by Madi252 – Sun Mar 2 21:27:13 2025 -0500
+- [b5458aa] Add files via upload – by ArtinYousefi – Wed Feb 26 21:26:16 2025 -0500
+- [9707435] Update README.md – by ArtinYousefi – Wed Feb 26 21:25:05 2025 -0500
+- [c190a1a] Add files via upload – by ArtinYousefi – Wed Feb 26 21:23:59 2025 -0500
+- [71325e4] Delete Assembler/README2.md – by ArtinYousefi – Wed Feb 26 20:50:25 2025 -0500
+- [3c14477] Add files via upload – by ArtinYousefi – Wed Feb 26 20:50:07 2025 -0500
+- [6370e0c] Create README2.md – by ArtinYousefi – Wed Feb 26 20:47:36 2025 -0500
+- [c810d31] Create README.md – by ArtinYousefi – Wed Feb 26 20:47:00 2025 -0500
+- [4c4b282] Delete Assembler – by ArtinYousefi – Wed Feb 26 20:40:18 2025 -0500
+- [307efff] Create Assembler – by ArtinYousefi – Wed Feb 26 20:38:41 2025 -0500
+- [a61fcdf] Add files via upload – by ArtinYousefi – Mon Feb 10 14:13:37 2025 -0500
+- [3f5073f] Update README.md – by Madi252 – Sat Feb 8 21:20:49 2025 -0500
+- [13341c2] Update load.txt – by Ilakkiya V – Sat Feb 8 21:17:30 2025 -0500
+- [832ea89] Update listing.txt – by Ilakkiya V – Sat Feb 8 21:17:14 2025 -0500
+- [7353c32] Add files via upload – by Ilakkiya V – Sat Feb 8 21:16:40 2025 -0500
+- [ab0fe67] Delete Assembler.jar – by Ilakkiya V – Sat Feb 8 21:16:31 2025 -0500
+- [2f8f060] Add files via upload – by Ilakkiya V – Sat Feb 8 21:16:10 2025 -0500
+- [f3839d9] Delete Assembler.class – by Ilakkiya V – Sat Feb 8 21:15:31 2025 -0500
+- [3b5b954] Update Assembler.java – by Ilakkiya V – Sat Feb 8 21:14:26 2025 -0500
+- [5dcd9c6] Delete test2.asm – by Madi252 – Sat Feb 8 21:14:12 2025 -0500
+- [c6662b6] Update test.asm – by Madi252 – Sat Feb 8 21:10:31 2025 -0500
+- [e91b98b] Create test2.asm – by Madi252 – Sat Feb 8 20:56:59 2025 -0500
+- [8df2966] Update test.asm – by ArtinYousefi – Sat Feb 8 20:52:29 2025 -0500
+- [590df5c] Update test.asm – by ArtinYousefi – Sat Feb 8 20:52:17 2025 -0500
+- [a1b62ba] Update Assembler.java – by Ilakkiya V – Sat Feb 8 20:47:16 2025 -0500
+- [86d7d2c] Merge pull request #1 from ArtinYousefi/updates-2 – by Ilakkiya V – Sat Feb 8 20:46:32 2025 -0500
+- [bce910d] Update Assembler.java – by Ilakkiya V – Sat Feb 8 20:45:26 2025 -0500
+- [5595c6f] Update Assembler.java – by Ilakkiya V – Sat Feb 8 20:39:05 2025 -0500
+- [0caa1e6] Update Assembler.java – by Ilakkiya V – Sat Feb 8 20:24:04 2025 -0500
+- [ce09cb6] Add files via upload – by ArtinYousefi – Fri Feb 7 18:05:27 2025 -0500
+- [b10e20d] Initial commit – by ArtinYousefi – Fri Feb 7 18:04:34 2025 -0500
